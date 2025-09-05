@@ -5,6 +5,7 @@ const routes = require('./routes/dinocatsRoutes');
 
 app.use(cors());
 app.use(express.json());
+app.use(routes)
 
 app.get('/api', (req, res) => {
     res.json({ message: 'Olá do servidor Node.js!'})

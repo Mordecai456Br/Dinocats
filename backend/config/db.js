@@ -54,7 +54,7 @@ const pool = new Pool({
                 FOREIGN KEY (dinocat_id) REFERENCES dinocats(id)
                 ON DELETE CASCADE,
             CONSTRAINT fk_emotion
-                FOREIGN KEY (emocao_id) REFERENCES emotions(id)
+                FOREIGN KEY (emotion_id) REFERENCES emotions(id)
                 ON DELETE CASCADE
         );
 

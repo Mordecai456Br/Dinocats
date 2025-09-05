@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 // Controllers
-const UsersController = require('./controllers/usersController');
-const DinocatsController = require('./controllers/dinocatsController');
-const SkillsController = require('./controllers/skillsController');
-const EmotionsController = require('./controllers/emotionsController');
+const UsersController = require('../controllers/usersController.js');
+const DinocatsController = require('../controllers/dinocatsController.js');
+const SkillsController = require('../controllers/skillsController.js');
+const EmotionsController = require('../controllers/emotionsController.js');
 
 /////////////////////////
 // USERS

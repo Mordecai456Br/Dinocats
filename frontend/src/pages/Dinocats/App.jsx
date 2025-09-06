@@ -1,45 +1,54 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import Login from '../../components/Login';
+import Home from '../../components/Home';
+import DinocatSelection from '../../components/DinocatSelection';
+import Battle from '../../components/Battle';
 
-import './App.css'
-
-import { useEffect } from "react";
-
-function App() {
-    const [message, setMessage] = useState("");
-    const [dinocats, setDinocats] = useState([]);
-
-    useEffect(() => {
-        fetch('http://localhost:5000/api')
-            .then(res => res.json())
-            .then(data => setMessage(data.message))
-            .catch(err => console.error(err));
-    }, []);
-
-    useEffect(() => {
-        fetch('http://localhost:5000/dinocats')
-            .then(res => res.json())
-            .then(data => setDinocats(data))
-            .catch(err => console.error(err))
-    }, []);
+export default function App() {
+    const [user, setUser] = useState(null); // usuário logado
+    const [currentScreen, setCurrentScreen] = useState('login'); // controla tela
+    const [selectedDinocat, setSelectedDinocat] = useState(null); // dinocat escolhido
+    const [battleData, setBattleData] = useState(null); // dados da batalha
 
     return (
         <div>
-            <h1>Minha Aplicação</h1>
-            <p>{message}</p>
+            {currentScreen === 'login' && (
+                <Login 
+                    onLogin={(loggedUser) => {
+                        setUser(loggedUser);
+                        setCurrentScreen('home');
+                    }} 
+                />
+            )}
 
-            <div className='dinocats-container'>
-                {dinocats.map((dinocat) => (
-                <div key={dinocat.id} className='dinocat-card'>
-                    <h3>{dinocat.name}</h3>
-                    <p>{dinocat.personality}</p>
-                    <p>{dinocat.hp_base}</p>
-                    <p>{dinocat.attack_base}</p>
-                </div>
-                ))}
-            </div>
+            {currentScreen === 'home' && user && (
+                <Home 
+                    user={user} 
+                    onSelectDinocat={() => setCurrentScreen('dinocats')}
+                />
+            )}
+
+            {currentScreen === 'dinocats' && user && (
+                <DinocatSelection 
+                    user={user}
+                    onChoose={(dinocat) => {
+                        setSelectedDinocat(dinocat);
+                        setCurrentScreen('battle');
+                    }}
+                />
+            )}
+
+            {currentScreen === 'battle' && user && selectedDinocat && (
+                <Battle 
+                    user={user}
+                    dinocat={selectedDinocat}
+                    onEndBattle={() => {
+                        setSelectedDinocat(null);
+                        setBattleData(null);
+                        setCurrentScreen('home');
+                    }}
+                />
+            )}
         </div>
     );
 }
-
-export default App;
-

@@ -10,11 +10,8 @@ const EmotionsController = require('../controllers/dinocats/emotionsController.j
 /////////////////////////
 // USERS
 /////////////////////////
-router.get('/users', UsersController.getAll);
-router.get('/users/:id', UsersController.getById);
-router.post('/users', UsersController.create);
-router.put('/users/:id', UsersController.update);
-router.delete('/users/:id', UsersController.remove);
+
+
 
 /////////////////////////
 // DINOCATS

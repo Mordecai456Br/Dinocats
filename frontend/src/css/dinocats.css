@@ -1,0 +1,89 @@
+.dinocat-card {
+    display: flex;
+    width: 18rem;
+    padding: 1.25rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 460px;
+    max-height: 460px;
+    border-radius: 1.125rem;
+    border: 2px solid #D7D7D7;
+    background: #FFF;
+
+}
+.dinocat-card:hover {
+    transform: scale(1.03);
+}
+.dinocat-img-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
+}
+.dinocat-img {
+    width: 13.5rem;
+    height: 13.5rem;
+    aspect-ratio: 1/1;
+
+    border-radius: 0.75rem;
+    border: 1px solid #E4E4E4;
+    object-fit: cover;
+}
+
+.dinocat-text-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    gap: 0.5rem;
+    align-self: stretch;
+}
+
+.dinocat-name {
+    color: #000;
+    font-family: Inter;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.dinocat-description {
+    align-self: stretch;
+
+    color: #767676;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.dinocat-choose {
+    display: flex;
+    width: 12.75rem;
+    height: 3.25rem;
+    padding: 1.25rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.625rem;
+
+    border-radius: 0.75rem;
+    border: 2px solid #D7D7D7;
+    background: #FFF;
+
+    color: #3F3F3F;
+    font-family: Inter;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+.dinocat-choose:hover{
+    background-color: #3CA0F8;
+    color: white;
+    border-color: #62b2f8;
+}

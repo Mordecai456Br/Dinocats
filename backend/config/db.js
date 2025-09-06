@@ -85,6 +85,41 @@ const pool = new Pool({
         `)
 })();
 
+(async () => {
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS invites (
+            id SERIAL PRIMARY KEY,
+            user1_id INT NOT NULL, -- Quem enviou o convite
+            user2_id INT NOT NULL, -- Quem recebeu
+            dinocat1_id INT NOT NULL,
+            dinocat2_id INT,
+            accepted BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user1_id) REFERENCES users(id),
+            FOREIGN KEY (user2_id) REFERENCES users(id),
+            FOREIGN KEY (dinocat1_id) REFERENCES dinocats(id),
+            FOREIGN KEY (dinocat2_id) REFERENCES dinocats(id)
+        );
+
+        `)
+})();
+
+(async () => {
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS battles (
+            id SERIAL PRIMARY KEY,
+            user1_id INT NOT NULL,
+            user2_id INT NOT NULL,
+            dinocat1_id INT NOT NULL,
+            dinocat2_id INT NOT NULL,
+            winner_id INT,
+            started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            ended_at TIMESTAMP
+        );
+
+        `)
+})();
+
 pool.connect().then(() => console.log("✅ Conectado ao PostgreSQL!"))
     .catch(err => console.error("❌ Erro ao conectar:", err));
 

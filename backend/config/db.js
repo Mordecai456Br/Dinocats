@@ -11,14 +11,8 @@ const pool = new Pool({
 
 (async () => {
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            birthday DATE NOT NULL,
-            cpf VARCHAR(11) NOT NULL,
-            description VARCHAR(255)
-        );
-
+        
+        
         CREATE TABLE IF NOT EXISTS dinocats (
             id SERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
@@ -29,7 +23,11 @@ const pool = new Pool({
             trauma INT DEFAULT 0,
             pride INT DEFAULT 0,
             anxienty INT DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            user_id INT NOT NULL,
+            CONSTRAINT fk_user
+                FOREIGN KEY (user_id) REFERENCES users(id)
+                ON DELETE CASCADE
         );
 
         CREATE TABLE IF NOT EXISTS skills (
@@ -46,6 +44,8 @@ const pool = new Pool({
             value INT NOT NULL CHECK (value >= 0 AND value <= 100)
         );
         
+    
+
         CREATE TABLE IF NOT EXISTS dinocats_emotions (
             dinocat_id INT NOT NULL,
             emotion_id INT NOT NULL,
@@ -73,7 +73,17 @@ const pool = new Pool({
     `);
 })();
 
-
+(async () => {
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            birthday DATE NOT NULL,
+            cpf VARCHAR(11) NOT NULL,
+            password VARCHAR(40) NOT NULL
+        );
+        `)
+})();
 
 pool.connect().then(() => console.log("✅ Conectado ao PostgreSQL!"))
     .catch(err => console.error("❌ Erro ao conectar:", err));

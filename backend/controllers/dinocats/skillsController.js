@@ -1,4 +1,4 @@
-const SkillsModel = require('../models/skillsModel');
+const SkillsModel = require('../../models/dinocats/skillsModel');
 
 module.exports = {
     async getAll(req, res) {

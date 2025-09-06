@@ -1,11 +1,20 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const routes = require('./routes/dinocatsRoutes');
+
+const routes_dinocats = require('./routes/dinocatsRoutes');
+const routes_users = require('./routes/usersRoutes')
+const routes_invites = require('./routes/invitesRoutes');
+const routes_battles = require('./routes/battlesRoutes');
 
 app.use(cors());
 app.use(express.json());
-app.use(routes)
+app.use(
+    routes_dinocats,
+    routes_users,
+    routes_invites,
+    routes_battles,
+ )
 
 app.get('/api', (req, res) => {
     res.json({ message: 'Olá do servidor Node.js!'})

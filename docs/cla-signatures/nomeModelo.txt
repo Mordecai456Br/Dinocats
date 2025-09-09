@@ -1,0 +1,3 @@
+Eu, [NOME COMPLETO], confirmo que li e aceito os termos do CLA do projeto Dinocats.
+Data: [DIA/MÊS/ANO]
+GitHub: [@usuario]

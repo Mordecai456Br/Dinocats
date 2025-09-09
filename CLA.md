@@ -1,31 +1,34 @@
 # Contributor License Agreement (CLA) - Dinocats Battle System
 
-Este documento define os termos sob os quais colaboradores podem contribuir para o projeto **Dinocats - Battle System**.
+Obrigado por contribuir com o projeto **Dinocats**!
 
-## 1. Propósito
-Proteger a propriedade intelectual do projeto, estabelecendo que todas as contribuições feitas serão incorporadas sob os termos desta licença, garantindo os direitos do autor original.
+---
 
-## 2. Aceite
-Ao enviar contribuições para este repositório, você declara que:
-- Leu e entendeu este CLA.
-- Concorda que suas contribuições serão licenciadas sob os mesmos termos do projeto.
-- Não adquirirá direitos de propriedade intelectual ou comerciais sobre o projeto, salvo se houver contrato formal assinado.
+## Declaração de Contribuidor
+Ao enviar contribuições (código, documentação, ideias, etc.) para este repositório, você declara que:
 
-## 3. Direitos e Restrições
-- **Permitido**: Contribuir com código, correções, documentação, melhorias e novas funcionalidades.
-- **Proibido**: Vender, sublicenciar, distribuir, divulgar ou explorar comercialmente o projeto ou partes dele sem autorização formal por escrito do autor.
+1. Você é o autor original da contribuição ou tem permissão legal para contribuir com este material.
+2. Você concede ao mantenedor do projeto (Gabriel Freitas) o direito perpétuo, mundial, livre de royalties, de usar, modificar e distribuir suas contribuições como parte deste software.
+3. Você **não pode vender, redistribuir ou licenciar este código ou ideia sem autorização prévia e expressa do mantenedor**.
+4. Você **não adquire direitos autorais sobre o projeto principal**, apenas mantém autoria moral sobre as partes que criou.
 
-## 4. Registro de Assinaturas
-As assinaturas deste CLA serão **registradas via Gist** na conta GitHub do colaborador.  
-Cada colaborador deverá criar um Gist contendo:
-- Nome completo.
-- Conta GitHub.
-- Data de aceite.
-- Confirmação de que aceita este CLA.
+---
 
-## 5. Histórico Imutável
-Os registros de aceite serão armazenados em `/docs/CLA-assinados/` com os links para os Gists de cada colaborador.  
-**Nenhum colaborador poderá excluir ou alterar os registros existentes.**
+## Como assinar este CLA
 
-## 6. Contato
-Para dúvidas ou solicitações, entre em contato com o autor original do projeto.
+Para registrar sua assinatura, siga estes passos:
+
+1. Na pasta `/cla-signatures/` do repositório, copie o arquivo de modelo `modelo.txt` e renomeie com seu nome de usuário GitHub:
+
+cla-signatures/seu-usuario-github.txt
+
+2. Preencha o arquivo com seus dados:
+
+Eu, [SEU NOME COMPLETO], confirmo que li e aceito os termos do CLA do projeto Dinocats.
+Data: [DIA/MÊS/ANO]
+GitHub: [@usuario]
+Faça commit na sua branch e crie um Pull Request (PR) para a branch main.
+
+O mantenedor revisará e fará merge na main.
+
+🐋 @begodex

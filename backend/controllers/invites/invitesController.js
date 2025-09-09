@@ -20,6 +20,19 @@ module.exports = {
         }
     },
 
+    async getOpenInvites(req, res){
+        try {
+            const userId = req.params.id
+            if (!userId) return res.status(404).json({ message: 'user not found'})
+
+            const openInvites = await InvitesModel.getOpenInvites(userId);
+            res.json(openInvites);
+
+        } catch (err){
+            res.status(500).json({ error: err.message });
+        }
+    },
+
     async create(req, res) {
         try {
             const invite = await InvitesModel.create(req.body);

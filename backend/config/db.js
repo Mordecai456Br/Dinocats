@@ -80,7 +80,8 @@ const pool = new Pool({
             name VARCHAR(255) NOT NULL,
             birthday DATE NOT NULL,
             cpf VARCHAR(11) NOT NULL,
-            password VARCHAR(40) NOT NULL
+            password VARCHAR(40) NOT NULL,
+            is_on_battle_mode BOOLEAN DEFAULT FALSE
         );
         `)
 })();
@@ -91,8 +92,7 @@ const pool = new Pool({
             id SERIAL PRIMARY KEY,
             user1_id INT NOT NULL, -- Quem enviou o convite
             user2_id INT NOT NULL, -- Quem recebeu
-            dinocat1_id INT NOT NULL,
-            dinocat2_id INT,
+            
             accepted BOOLEAN DEFAULT FALSE,
             opencase BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

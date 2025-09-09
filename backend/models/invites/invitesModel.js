@@ -22,12 +22,12 @@ module.exports = {
         return rows;
     },
 
-    async create({ user1_id, user2_id, dinocat1_id, dinocat2_id, accepted = false, opencase = true }) {
+    async create({ user1_id, user2_id, accepted = false, opencase = true }) {
         const { rows } = await pool.query(`
-            INSERT INTO ${table} (user1_id, user2_id, dinocat1_id, dinocat2_id, accepted, opencase)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            INSERT INTO ${table} (user1_id, user2_id, accepted, opencase)
+            VALUES ($1, $2, $3, $4)
             RETURNING *`,
-            [user1_id, user2_id, dinocat1_id, dinocat2_id, accepted, opencase]
+            [user1_id, user2_id, accepted, opencase]
         );
         return rows[0];
     },

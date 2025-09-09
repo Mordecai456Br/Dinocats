@@ -12,6 +12,11 @@ module.exports = {
         return rows[0];
     },
 
+    async getUserInvites(user_id) {
+        const { rows } = await pool.query(`SELECT * FROM ${table} WHERE user2_id = $1`, [user_id]);
+        return rows;
+    },
+
     async getOpenInvites(user2_id) {
         const { rows } = await pool.query(`SELECT * FROM ${table} WHERE user2_id = $1 AND opencase = true`, [user2_id]);
         return rows;

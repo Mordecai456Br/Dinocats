@@ -6,7 +6,7 @@ export default function InvitesList({ userId }) {
 
   useEffect(() => {
     if (!open) return;
-    fetch(`http://localhost:5000/invites/${userId}/open`)
+    fetch(`http://localhost:5000/users/${userId}/open_invites`)
       .then((res) => res.json())
       .then(setInvites)
       .catch(console.error);
@@ -32,7 +32,7 @@ export default function InvitesList({ userId }) {
           ) : (
             invites.map((invite) => (
               <div key={invite.id} className="invite-item">
-                <p>User invitation {invite.user1_id}</p>
+                <p><b>User {invite.user1_id}</b> invited you for a battle</p>
                 <button onClick={() => handleInvite(invite.id, true, false)}>Accept</button>
                 <button onClick={() => handleInvite(invite.id, false, false)}>Decline</button>
               </div>

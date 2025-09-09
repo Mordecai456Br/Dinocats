@@ -6,17 +6,17 @@ export default function InvitesList({ userId }) {
 
   useEffect(() => {
     if (!open) return;
-    fetch(`http://localhost:5000/invites?user=${userId}`)
+    fetch(`http://localhost:5000/invites/${userId}/open`)
       .then((res) => res.json())
       .then(setInvites)
       .catch(console.error);
   }, [open, userId]);
 
-  const handleInvite = async (inviteId, accept) => {
+  const handleInvite = async (inviteId, accept, opencase) => {
     await fetch(`http://localhost:5000/invites/${inviteId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ accepted: accept }),
+      body: JSON.stringify({ accepted: accept , opencase: opencase}),
     });
     setInvites((prev) => prev.filter((i) => i.id !== inviteId));
   };
@@ -33,8 +33,8 @@ export default function InvitesList({ userId }) {
             invites.map((invite) => (
               <div key={invite.id} className="invite-item">
                 <p>User invitation {invite.user1_id}</p>
-                <button onClick={() => handleInvite(invite.id, true)}>Accept</button>
-                <button onClick={() => handleInvite(invite.id, false)}>Decline</button>
+                <button onClick={() => handleInvite(invite.id, true, false)}>Accept</button>
+                <button onClick={() => handleInvite(invite.id, false, false)}>Decline</button>
               </div>
             ))
           )}

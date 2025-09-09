@@ -5,6 +5,7 @@ const InvitesController = require('../controllers/invites/invitesController')
 
 router.get('/invites', InvitesController.getAll);
 router.get('/invites/:id', InvitesController.getById);
+router.get('/invites/:id/open', InvitesController.getOpenInvites);
 router.post('/invites', InvitesController.create);
 router.put('/invites/:id', InvitesController.update);
 router.delete('/invites/:id', InvitesController.remove);

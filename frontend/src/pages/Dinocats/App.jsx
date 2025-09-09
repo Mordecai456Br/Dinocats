@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Login from '../../components/Login';
+import Login from '../../components/Login.jsx';
 import Home from '../../components/Home';
 import DinocatSelection from '../../components/DinocatSelection';
 import Battle from '../../components/Battle';

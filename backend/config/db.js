@@ -25,7 +25,7 @@ const pool = new Pool({
             pride INT DEFAULT 0,
             anxienty INT DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            user_id INT NOT NULL,
+            user_id INT,
             CONSTRAINT fk_user
                 FOREIGN KEY (user_id) REFERENCES users(id)
                 ON DELETE CASCADE

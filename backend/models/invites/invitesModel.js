@@ -32,15 +32,29 @@ module.exports = {
         return rows[0];
     },
 
-    async update(id, { accepted, opencase }) {
+    async update(id, { user2_id ,accepted, opencase }) {
         const { rows } = await pool.query(`
             UPDATE ${table}
             SET 
-            accepted = COALESCE($2, accepted),
-            opencase = COALESCE($3, opencase)
+            user2_id = COALESCE($2, user2_id),
+            accepted = COALESCE($3, accepted),
+            opencase = COALESCE($4, opencase)
             WHERE id = $1
             RETURNING *`,
-            [id, accepted ?? null, opencase ?? null]
+            [id, user2_id ,accepted ?? false, opencase ?? true]
+        );
+        return rows[0];
+    },
+
+    async acceptInvite(id, {accepted = true, opencase = false} = {}) {
+        const { rows } = await pool.query(`
+            UPDATE ${table}
+            SET accepted = $2,
+            opencase = $3,
+            replied_at = CURRENT_TIMESTAMP
+            WHERE id = $1
+            RETURNING *
+            `, [id, accepted, opencase]
         );
         return rows[0];
     },

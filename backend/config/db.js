@@ -96,6 +96,7 @@ const pool = new Pool({
             accepted BOOLEAN DEFAULT FALSE,
             opencase BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            replied_at TIMESTAMP DEFAULT NULL,
             FOREIGN KEY (user1_id) REFERENCES users(id),
             FOREIGN KEY (user2_id) REFERENCES users(id),
             FOREIGN KEY (dinocat1_id) REFERENCES dinocats(id),

@@ -1,4 +1,7 @@
+const invitesModel = require('../../models/invites/invitesModel');
 const InvitesModel = require('../../models/invites/invitesModel');
+const usersModel = require('../../models/users/usersModel');
+
 
 module.exports = {
     async getAll(req, res) {
@@ -20,36 +23,36 @@ module.exports = {
         }
     },
 
-    async getUserInvites(req, res){
+    async getUserInvites(req, res) {
         try {
             const userId = req.params.id
-            if (!userId) return res.status(404).json({ message: 'user not found'})
+            if (!userId) return res.status(404).json({ message: 'user not found' })
 
             const userInvites = await InvitesModel.getUserInvites(userId);
             res.json(userInvites);
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({ error: err.message });
         }
     },
 
-    async getOpenInvites(req, res){
+    async getOpenInvites(req, res) {
         try {
             const userId = req.params.id
-            if (!userId) return res.status(404).json({ message: 'user not found'})
+            if (!userId) return res.status(404).json({ message: 'user not found' })
 
             const openInvites = await InvitesModel.getOpenInvites(userId);
             res.json(openInvites);
 
-        } catch (err){
+        } catch (err) {
             res.status(500).json({ error: err.message });
         }
     },
 
     async create(req, res) {
         try {
-            const { user1_id, user2_id} = req.body
-            if (user1_id === user2_id) return res.status(400).json({ error: 'you cant invite yourself'})
+            const { user1_id, user2_id } = req.body
+            if (user1_id === user2_id) return res.status(400).json({ error: 'you cant invite yourself' })
 
             const invite = await InvitesModel.create({ user1_id, user2_id });
             res.status(201).json(invite);
@@ -62,6 +65,33 @@ module.exports = {
         try {
             const invite = await InvitesModel.update(req.params.id, req.body);
             res.json(invite);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    },
+
+    async acceptInvite(req, res) {
+        try {
+            const inviteId = req.params.id
+
+            const invite = await invitesModel.findById(inviteId);
+
+            if (!invite) return res.status(404).json({ message: 'invite not found' })
+            if (invite.accepted) return res.status(409).json({ message: 'this invite has been accepted before'})
+
+
+
+            const user1 = await usersModel.findById(invite.user1_id)
+            if (user1.is_on_battle_mode) return res.status(403).json({ message: `${user1.name} (${user1.id}) is on battle mode` })
+            const user2 = await usersModel.findById(invite.user2_id)
+            if (user2.is_on_battle_mode) return res.status(403).json({ message: `${user2.name} (${user2.id}) is on battle mode` })
+
+            
+
+            const updatedInvite = await invitesModel.acceptInvite(inviteId)
+            await usersModel.setBattleMode(user1.id, user2.id, true);
+            return res.json({ message: `${user1.name} (${user1.id}) and ${user2.name} (${user2.id}) has been set on battle mode`, updatedInvite})
+
         } catch (err) {
             res.status(500).json({ error: err.message });
         }

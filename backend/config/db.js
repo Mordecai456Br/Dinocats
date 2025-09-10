@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { Pool } = require('pg')
+console.log("PGPASSWORD:", process.env.PGPASSWORD);
 
 const pool = new Pool({
     host: process.env.PGHOST,
@@ -98,9 +99,7 @@ const pool = new Pool({
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             replied_at TIMESTAMP DEFAULT NULL,
             FOREIGN KEY (user1_id) REFERENCES users(id),
-            FOREIGN KEY (user2_id) REFERENCES users(id),
-            FOREIGN KEY (dinocat1_id) REFERENCES dinocats(id),
-            FOREIGN KEY (dinocat2_id) REFERENCES dinocats(id)
+            FOREIGN KEY (user2_id) REFERENCES users(id)
         );
 
         `)

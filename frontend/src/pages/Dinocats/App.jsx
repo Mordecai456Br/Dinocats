@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Login from '../../components/Login.jsx';
+import Login from '../../components/login';
 import Home from '../../components/Home';
 import DinocatSelection from '../../components/DinocatSelection';
 import Battle from '../../components/Battle';
@@ -24,7 +24,7 @@ export default function App() {
             {currentScreen === 'home' && user && (
                 <Home 
                     user={user} 
-                    onSelectDinocat={() => setCurrentScreen('dinocats')}
+                    onAcceptInvite={() => setCurrentScreen('dinocats')}
                 />
             )}
 

@@ -2,12 +2,12 @@ const pool = require('../../config/db');
 const table = 'skills';
 
 module.exports = {
-    async findAll() {
+    async getAll() {
         const { rows } = await pool.query(`SELECT * FROM ${table}`);
         return rows;
     },
 
-    async findById(id) {
+    async getById(id) {
         const { rows } = await pool.query(`SELECT * FROM ${table} WHERE id = $1`, [id]);
         return rows[0];
     },

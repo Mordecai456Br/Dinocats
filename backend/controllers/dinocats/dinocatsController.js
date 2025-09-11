@@ -3,7 +3,7 @@ const DinocatsModel = require('../../models/dinocats/dinocatsModel');
 module.exports = {
     async getAll(req, res) {
         try {
-            const dinos = await DinocatsModel.findAll();
+            const dinos = await DinocatsModel.getAll();
             res.json(dinos);
         } catch (err) {
             res.status(500).json({ error: err.message });
@@ -12,7 +12,7 @@ module.exports = {
 
     async getById(req, res) {
         try {
-            const dino = await DinocatsModel.findById(req.params.id);
+            const dino = await DinocatsModel.getById(req.params.id);
             if (!dino) return res.status(404).json({ message: 'Dinocat not found' });
             res.json(dino);
         } catch (err) {

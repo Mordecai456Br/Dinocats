@@ -2,14 +2,20 @@ const supabase = require('../../config/supabaseClient');
 const table = 'dinocats';
 
 module.exports = {
-  async findAll() {
+  async getAll() {
     const { data, error } = await supabase.from(table).select('*');
     if (error) throw error;
     return data;
   },
 
-  async findById(id) {
+  async getById(id) {
     const { data, error } = await supabase.from(table).select('*').eq('id', id).single();
+    if (error) throw error;
+    return data;
+  },
+
+  async getDinocatsByUserId(user_id) {
+    const { data, error } = await supabase.from(table).select('*').eq('user_id', user_id).single();
     if (error) throw error;
     return data;
   },

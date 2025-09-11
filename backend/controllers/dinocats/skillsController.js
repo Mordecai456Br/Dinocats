@@ -3,7 +3,7 @@ const SkillsModel = require('../../models/dinocats/skillsModel');
 module.exports = {
     async getAll(req, res) {
         try {
-            const skills = await SkillsModel.findAll();
+            const skills = await SkillsModel.getAll();
             res.json(skills);
         } catch (err) {
             res.status(500).json({ error: err.message });
@@ -12,7 +12,7 @@ module.exports = {
 
     async getById(req, res) {
         try {
-            const skill = await SkillsModel.findById(req.params.id);
+            const skill = await SkillsModel.getById(req.params.id);
             if (!skill) return res.status(404).json({ message: 'Skill not found' });
             res.json(skill);
         } catch (err) {

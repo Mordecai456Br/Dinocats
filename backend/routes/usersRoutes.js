@@ -9,6 +9,7 @@ const InvitesController = require('../controllers/invites/invitesController.js')
 
 router.get('/users', UsersController.getAll);
 router.get('/users/:id', UsersController.getById);
+router.get('/users/:id/dinocats', UsersController.getDinocatsByUserId);
 router.get('/users/:id/open_invites', InvitesController.getOpenInvites);
 router.get('/users/:id/invites', InvitesController.getUserInvites);
 

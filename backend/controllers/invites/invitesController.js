@@ -6,7 +6,7 @@ const usersModel = require('../../models/users/usersModel');
 module.exports = {
     async getAll(req, res) {
         try {
-            const invites = await InvitesModel.findAll();
+            const invites = await InvitesModel.getAll();
             res.json(invites);
         } catch (err) {
             res.status(500).json({ error: err.message });
@@ -15,7 +15,7 @@ module.exports = {
 
     async getById(req, res) {
         try {
-            const invite = await InvitesModel.findById(req.params.id);
+            const invite = await InvitesModel.getById(req.params.id);
             if (!invite) return res.status(404).json({ message: 'Invite not found' });
             res.json(invite);
         } catch (err) {
@@ -74,16 +74,16 @@ module.exports = {
         try {
             const inviteId = req.params.id
 
-            const invite = await invitesModel.findById(inviteId);
+            const invite = await invitesModel.getById(inviteId);
 
             if (!invite) return res.status(404).json({ message: 'invite not found' })
             if (invite.accepted) return res.status(409).json({ message: 'this invite has been accepted before'})
 
 
 
-            const user1 = await usersModel.findById(invite.user1_id)
+            const user1 = await usersModel.getById(invite.user1_id)
             if (user1.is_on_battle_mode) return res.status(403).json({ message: `${user1.name} (${user1.id}) is on battle mode` })
-            const user2 = await usersModel.findById(invite.user2_id)
+            const user2 = await usersModel.getById(invite.user2_id)
             if (user2.is_on_battle_mode) return res.status(403).json({ message: `${user2.name} (${user2.id}) is on battle mode` })
 
             

@@ -3,7 +3,7 @@ const EmotionsModel = require('../../models/dinocats/emotionsModel');
 module.exports = {
     async getAll(req, res) {
         try {
-            const emotions = await EmotionsModel.findAll();
+            const emotions = await EmotionsModel.getAll();
             res.json(emotions);
         } catch (err) {
             res.status(500).json({ error: err.message });
@@ -12,7 +12,7 @@ module.exports = {
 
     async getById(req, res) {
         try {
-            const emotion = await EmotionsModel.findById(req.params.id);
+            const emotion = await EmotionsModel.getById(req.params.id);
             if (!emotion) return res.status(404).json({ message: 'Emotion not found' });
             res.json(emotion);
         } catch (err) {

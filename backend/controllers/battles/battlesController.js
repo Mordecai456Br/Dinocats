@@ -3,7 +3,7 @@ const BattlesModel = require('../../models/battles/battlesModel');
 module.exports = {
     async getAll(req, res) {
         try {
-            const battles = await BattlesModel.findAll();
+            const battles = await BattlesModel.getAll();
             res.json(battles);
         } catch (err) {
             res.status(500).json({ error: err.message });
@@ -12,7 +12,7 @@ module.exports = {
 
     async getById(req, res) {
         try {
-            const battle = await BattlesModel.findById(req.params.id);
+            const battle = await BattlesModel.getById(req.params.id);
             if (!battle) return res.status(404).json({ message: 'Battle not found' });
             res.json(battle);
         } catch (err) {

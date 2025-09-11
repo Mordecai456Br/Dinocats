@@ -66,6 +66,20 @@ module.exports = {
     return data;
   },
 
+  async declineInvite(id, { accepted = false, opencase = false } = {}) {
+    const { data, error } = await supabase.from(table)
+      .update({
+        accepted,
+        opencase,
+        replied_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
   async remove(id) {
     const { data, error } = await supabase.from(table)
       .delete()

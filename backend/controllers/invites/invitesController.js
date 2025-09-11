@@ -97,6 +97,28 @@ module.exports = {
         }
     },
 
+    async declineInvite(req, res) {
+        try {
+            const inviteId = req.params.id
+
+            const invite = await invitesModel.getById(inviteId);
+
+            if (!invite) return res.status(404).json({ message: 'invite not found' })
+            if (invite.accepted) return res.status(409).json({ message: 'this invite has been accepted before'})
+
+
+            const user1 = await usersModel.getById(invite.user1_id)
+            const user2 = await usersModel.getById(invite.user2_id)
+
+            const updatedInvite = await invitesModel.declineInvite(inviteId)
+            await usersModel.setBattleMode(user1.id, user2.id, false);
+            return res.json({ message: `${user1.name} (${user1.id}) and ${user2.name} (${user2.id}) has been out of battle mode`, updatedInvite})
+
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    },
+
     async remove(req, res) {
         try {
             const invite = await InvitesModel.remove(req.params.id);

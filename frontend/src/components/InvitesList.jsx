@@ -21,7 +21,7 @@ export default function InvitesList({ userId, onAcceptInvite }) {
     });
     setInvites((prev) => prev.filter((i) => i.id !== inviteId));
   };
-
+// adicionar decline
   return (
 
     <div style={{ position: "absolute", top: 10, left: 10 }}>

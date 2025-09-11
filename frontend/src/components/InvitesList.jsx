@@ -13,7 +13,7 @@ export default function InvitesList({ userId }) {
   }, [open, userId]);
 
   const handleInvite = async (inviteId, accept, opencase) => {
-    await fetch(`http://localhost:5000/invites/${inviteId}`, {
+    await fetch(`http://localhost:5000/invites/${inviteId}/accept`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ accepted: accept , opencase: opencase}),

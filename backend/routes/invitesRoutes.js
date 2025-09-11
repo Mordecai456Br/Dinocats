@@ -9,6 +9,7 @@ router.get('/invites/:id', InvitesController.getById);
 router.post('/invites', InvitesController.create);
 
 router.put('/invites/:id/accept', InvitesController.acceptInvite);
+router.put('/invites/:id/decline', InvitesController.declineInvite);
 
 router.put('/invites/:id', InvitesController.update);
 router.delete('/invites/:id', InvitesController.remove);

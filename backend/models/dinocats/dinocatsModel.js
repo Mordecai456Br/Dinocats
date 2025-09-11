@@ -15,7 +15,7 @@ module.exports = {
   },
 
   async getDinocatsByUserId(user_id) {
-    const { data, error } = await supabase.from(table).select('*').eq('user_id', user_id).single();
+    const { data, error } = await supabase.from(table).select('*').eq('user_id', user_id);
     if (error) throw error;
     return data;
   },

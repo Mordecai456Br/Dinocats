@@ -1,9 +1,8 @@
-// DinocatCard.jsx
-import React from 'react';
-import '../css/dinocats.css';
-
-
 export default function DinocatCard({ dino, onChoose }) {
+    if (!dino|| !dino.name) {
+        return null; // ou um fallback visual
+    }
+
     return (
         <div className="dinocat-card">
             <div className="dinocat-img-text">
@@ -14,7 +13,8 @@ export default function DinocatCard({ dino, onChoose }) {
                 />
                 <div className="dinocat-text-div">
                     <p className="dinocat-name">{dino.name}</p>
-                    <p className="dinocat-description">{dino.description}</p>
+                    <p className="dinocat-hp">{dino.hp_base}</p>
+                    <p className="dinocat-personality">{dino.personality}</p>
                 </div>
             </div>
 
@@ -27,4 +27,3 @@ export default function DinocatCard({ dino, onChoose }) {
         </div>
     );
 }
-

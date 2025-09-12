@@ -1,28 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { io } from 'socket.io-client';
 
-export default function InvitesList({ userId, onAcceptInvite, user }) {
+
+export default function InvitesList({ userId, onAcceptInvite, socket }) {
   const [invites, setInvites] = useState([]);
   const [open, setOpen] = useState(false);
   const [confirmModal, setConfirmModal] = useState(null);
   const [userToInviteId, setUserToInviteId] = useState("");
   const [feedback, setFeedback] = useState("");
 
+
   useEffect(() => {
+    
     if (!open) return;
     fetch(`http://localhost:5000/users/${userId}/open_invites`)
       .then((res) => res.json())
       .then(setInvites)
       .catch(console.error);
+
+    
   }, [open, userId]);
 
-  const handleAcceptInvite = async (inviteId, accept, opencase) => {
-    await fetch(`http://localhost:5000/invites/${inviteId}/accept`, {
+  const handleAcceptInvite = async (invite, accept, opencase) => {
+    await fetch(`http://localhost:5000/invites/${invite.id}/accept`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ accepted: accept, opencase: opencase }),
     });
-    setInvites((prev) => prev.filter((i) => i.id !== inviteId));
+    setInvites((prev) => prev.filter((i) => i.id !== invite.id));
+    // muda a tela localmente
+    if (typeof onAcceptInvite === "function") onAcceptInvite();
+
+    
   };
+
+
+
 
   const handleDeclineInvite = async (inviteId, accept, opencase) => {
     await fetch(`http://localhost:5000/invites/${inviteId}/decline`, {
@@ -35,7 +48,7 @@ export default function InvitesList({ userId, onAcceptInvite, user }) {
 
   const showFeedback = (message) => {
     setFeedback(message);
-    setTimeout(() => setFeedback(""),3000);
+    setTimeout(() => setFeedback(""), 3000);
   };
 
   return (
@@ -43,7 +56,7 @@ export default function InvitesList({ userId, onAcceptInvite, user }) {
     <div style={{ position: "absolute", top: 10, left: 10 }}>
       <button onClick={() => setOpen(!open)}>Notifications</button>
       {open && (
-        <div className="invite-list" style={{background: "blue"}}>
+        <div className="invite-list" style={{ background: "blue" }}>
           <h3>Invites</h3>
           {invites.length === 0 ? (
             <p>None invatations</p>
@@ -52,7 +65,7 @@ export default function InvitesList({ userId, onAcceptInvite, user }) {
               <div key={invite.id} className="invite-item">
                 <p><b>{invite.users.name}</b> invited you for a battle</p>
                 <p> data: [user_id = {invite.user1_id}] [invite_id = {invite.id}]</p>
-                <button onClick={() => setConfirmModal({ inviteId: invite.id, action: "accept" })}>Accept</button>
+                <button onClick={() => setConfirmModal({ inviteId: invite, action: "accept" })}>Accept</button>
                 <button onClick={() => setConfirmModal({ inviteId: invite.id, action: "decline" })}>Decline</button>
               </div>
             ))
@@ -106,7 +119,7 @@ export default function InvitesList({ userId, onAcceptInvite, user }) {
                 return;
               }
 
-              if (userId !== userToInviteId) {
+              if (userId === userToInviteId) {
                 showFeedback("❌ Você não pode se convidar");
                 return;
               }

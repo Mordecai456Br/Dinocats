@@ -22,7 +22,7 @@ module.exports = {
 
   async getOpenInvites(user2_id) {
     const { data, error } = await supabase.from(table)
-      .select('*')
+      .select('*, users!invites_user1_id_fkey(name)')
       .eq('user2_id', user2_id)
       .eq('opencase', true);
     if (error) throw error;

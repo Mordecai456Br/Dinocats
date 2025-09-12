@@ -6,7 +6,8 @@ export default function Home({ user, onAcceptInvite }) {
   return (
     <div>
       <h1>Bem-vindo, {user.name}</h1>
-      <InvitesList userId={user.id} onAcceptInvite={onAcceptInvite} />
+      <InvitesList userId={user.id} onAcceptInvite={onAcceptInvite} user={user}/>
+      
     </div>
   );
 }

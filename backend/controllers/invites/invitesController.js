@@ -52,7 +52,7 @@ module.exports = {
     async create(req, res) {
         try {
             const { user1_id, user2_id } = req.body
-            if (user1_id === user2_id) return res.status(400).json({ error: 'you cant invite yourself' })
+            if (Number(user1_id) === Number(user2_id)) return res.status(400).json({ error: 'you cant invite yourself' })
 
             const invite = await InvitesModel.create({ user1_id, user2_id });
             res.status(201).json(invite);

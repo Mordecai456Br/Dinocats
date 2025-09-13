@@ -62,7 +62,17 @@ export default function App() {
                 <Home
                     user={user}
                     socket={socketRef.current}
-                    onAcceptInvite={() => setCurrentScreen('dinocats')}
+                    onAcceptInvite={() => {
+                        setCurrentScreen('dinocats')
+                        /*
+                        if (socketRef.current) {
+                            socketRef.current.emit('registerUser', loggedUser.id);
+                            console.log(`Usuário ${loggedUser.name} registrado no servidor`);
+                        }
+                            */
+                    }}
+
+
                 />
             )}
 

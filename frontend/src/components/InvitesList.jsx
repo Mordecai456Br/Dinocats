@@ -11,14 +11,14 @@ export default function InvitesList({ userId, onAcceptInvite, socket }) {
 
 
   useEffect(() => {
-    
+
     if (!open) return;
     fetch(`http://localhost:5000/users/${userId}/open_invites`)
       .then((res) => res.json())
       .then(setInvites)
       .catch(console.error);
 
-    
+
   }, [open, userId]);
 
   const handleAcceptInvite = async (invite, accept, opencase) => {
@@ -31,7 +31,18 @@ export default function InvitesList({ userId, onAcceptInvite, socket }) {
     // muda a tela localmente
     if (typeof onAcceptInvite === "function") onAcceptInvite();
 
-    
+    if (socket) {
+      socket.emit("joinBattleRoom", { inviteId: invite.id, userId: userId });
+    }
+
+    // muda a tela apenas quando o backend avisar que todos estão na sala
+    if (socket) {
+      socket.on("bothInRoom", ({ inviteId }) => {
+        if (inviteId === invite.id) {
+          setCurrentScreen("dinocats");
+        }
+      });
+    }
   };
 
 

@@ -3,6 +3,7 @@ import Login from '../../components/login';
 import Home from '../../components/Home';
 import DinocatSelection from '../../components/DinocatSelection';
 import Battle from '../../components/Battle';
+
 import { io } from "socket.io-client";
 
 export default function App() {
@@ -29,7 +30,7 @@ export default function App() {
         socketRef.current.on('pong', (data) => {
             console.log('Servidor respondeu:', data);
         });
-
+       
         return () => {
             socketRef.current.disconnect();
         };
@@ -45,13 +46,13 @@ export default function App() {
 
                         // registra o usuário no servidor
                         if (socketRef.current && socketRef.current.connected) {
-                            socketRef.current.emit('registerUser', loggedUser.id);
-                            console.log(`Usuário ${loggedUser.name} registrado no servidor`);
+                            socketRef.current.emit('loggedUser', loggedUser.id);
+                            console.log(`Usuário ${loggedUser.name} logado no servidor`);
                         } else {
                             // caso ainda não tenha conectado
                             socketRef.current.on('connect', () => {
-                                socketRef.current.emit('registerUser', loggedUser.id);
-                                console.log(`Usuário ${loggedUser.name} registrado após conectar`);
+                                socketRef.current.emit('loggedUser', loggedUser.id);
+                                console.log(`Usuário ${loggedUser.name} se conectou`);
                             });
                         }
                     }}
@@ -62,7 +63,7 @@ export default function App() {
                 <Home
                     user={user}
                     socket={socketRef.current}
-                    onAcceptInvite={() => {
+                    onBothInRoom={() => {
                         setCurrentScreen('dinocats')
                         /*
                         if (socketRef.current) {

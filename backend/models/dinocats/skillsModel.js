@@ -12,26 +12,27 @@ module.exports = {
         return rows[0];
     },
 
-    async create({ name, type, damage, cure }) {
+    async create({ name, type, value, emotions_attributes_id }) {
         const { rows } = await pool.query(`
-            INSERT INTO ${table} (name, type, damage, cure)
-            VALUES ($1,$2,$3,$4)
-            RETURNING *`,
-            [name, type, damage, cure]
+        INSERT INTO ${table} (name, type, value, emotions_attributes_id)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *`,
+            [name, type, value, emotions_attributes_id]
         );
         return rows[0];
     },
 
-    async update(id, { name, type, damage, cure }) {
+    async update(id, { name, type, value, emotions_attributes_id }) {
         const { rows } = await pool.query(`
-            UPDATE ${table}
-            SET name = COALESCE($2, name),
-                type = COALESCE($3, type),
-                damage = COALESCE($4, damage),
-                cure = COALESCE($5, cure)
-            WHERE id = $1
-            RETURNING *`,
-            [id, name ?? null, type ?? null, damage ?? null, cure ?? null]
+        UPDATE ${table}
+        SET 
+            name = COALESCE($2, name),
+            type = COALESCE($3, type),
+            value = COALESCE($4, value),
+            emotions_attributes_id = COALESCE($5, emotions_attributes_id)
+        WHERE id = $1
+        RETURNING *`,
+            [id, name ?? null, type ?? null, value ?? null, emotions_attributes_id ?? null]
         );
         return rows[0];
     },

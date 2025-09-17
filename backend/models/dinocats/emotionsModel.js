@@ -21,7 +21,7 @@ module.exports = {
         );
         return rows[0];
     },
-
+    
     async update(id, { name, value }) {
         const { rows } = await pool.query(`
             UPDATE ${table}

@@ -29,7 +29,7 @@ module.exports = {
     return data;
   },
 
-  async create({ user1_id, user2_id, accepted = false, opencase = true, created_at, replied_at }) {
+  async create({ user1_id, user2_id, accepted = false, opencase = true, created_at = new Date().toISOString(), replied_at }) {
     const { data, error } = await supabase.from(table)
       .insert([{ user1_id, user2_id, accepted, opencase, created_at, replied_at }])
       .select()

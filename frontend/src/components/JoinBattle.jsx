@@ -45,6 +45,14 @@ export default function JoinBattle({ user, socket }) {
   const userHasPedingBattle = (userId) => {
     fetch(`http://localhost:5000/users/${userId}/pending_battle`)
       .then((res) => res.json())
+      .then((data) => {
+        // handle the response data here, for example:
+        if (data.pending) {
+          showFeedback("Você já está em uma batalha pendente!")
+        } else {
+          showFeedback("Nenhuma batalha pendente encontrada.");
+        }
+      })
       .catch(console.error);
   };
 
@@ -53,6 +61,7 @@ export default function JoinBattle({ user, socket }) {
     socket.emit("joinBattleRoom", { inviteId, userId: user.id });
   };
 */
+
   const abandonBattle = () => {
     if (!inviteId) return showFeedback("Digite o inviteId!");
     socket.emit("leaveBattleRoom", { inviteId, userId: user.id });

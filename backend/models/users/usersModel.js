@@ -16,7 +16,8 @@ module.exports = {
   },
 
   async userPendingBattle(user_id) {
-    const { data, error } = await supabase.from(table).select(`battles!user1_id(id)`).eq('id', user_id).eq('battles.status','pending').single();
+    const { data, error } = await supabase.from('battles').select("id").eq('status','pending')
+    .or(`user1_id.eq.${user_id}, user2_id.eq.${user_id}`).single();
     if (error) throw error;
     return data;
   },

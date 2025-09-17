@@ -29,21 +29,23 @@ module.exports = {
     return data;
   },
 
-  async create({ user1_id, user2_id, accepted = false, opencase = true }) {
+  async create({ user1_id, user2_id, accepted = false, opencase = true, created_at, replied_at }) {
     const { data, error } = await supabase.from(table)
-      .insert([{ user1_id, user2_id, accepted, opencase }])
+      .insert([{ user1_id, user2_id, accepted, opencase, created_at, replied_at }])
       .select()
       .single();
     if (error) throw error;
     return data;
   },
 
-  async update(id, { user2_id, accepted, opencase }) {
+  async update(id, { user2_id, accepted, opencase, created_at, replied_at }) {
     const { data, error } = await supabase.from(table)
       .update({
         user2_id: user2_id ?? null,
         accepted: accepted ?? false,
-        opencase: opencase ?? true
+        opencase: opencase ?? true,
+        created_at: created_at ?? null,
+        replied_at: replied_at ?? null
       })
       .eq('id', id)
       .select()

@@ -14,10 +14,10 @@ module.exports = {
     return data;
   },
 
-  async create({ user1_id, user2_id, dinocat1_id, dinocat2_id, winner_id = null }) {
+  async create({ user1_id, user2_id, dinocat1_id, dinocat2_id, winner_id, started_at, ended_at, invite_id }) {
     const { data, error } = await supabase
       .from(table)
-      .insert([{ user1_id, user2_id, dinocat1_id, dinocat2_id, winner_id }])
+      .insert([{ user1_id, user2_id, dinocat1_id, dinocat2_id, winner_id, started_at, ended_at, invite_id }])
       .select()
       .single();
     if (error) throw error;

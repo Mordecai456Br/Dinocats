@@ -20,28 +20,26 @@ module.exports = {
     return data;
   },
 
-  async create({ name, personality, hp_base = 100, attack_base = 20, defense_base = 15, trauma = 0, pride = 0, anxienty = 0, user_id = null }) {
+  async create({ name, user_id, kills, deaths, level, xp }) {
     const { data, error } = await supabase
       .from(table)
-      .insert([{ name, personality, hp_base, attack_base, defense_base, trauma, pride, anxienty, user_id }])
+      .insert([{ name, user_id, kills, deaths, level, xp }])
       .select()
       .single();
     if (error) throw error;
     return data;
   },
 
-  async update(id, { name, personality, hp_base, attack_base, defense_base, trauma, pride, anxienty }) {
+  async update(id, { name, user_id, kills, deaths, level, xp}) {
     const { data, error } = await supabase
       .from(table)
       .update({
         name,
-        personality,
-        hp_base,
-        attack_base,
-        defense_base,
-        trauma,
-        pride,
-        anxienty
+        user_id,
+        kills,
+        deaths,
+        level,
+        xp
       })
       .eq('id', id)
       .select()

@@ -47,8 +47,8 @@ export default function JoinBattle({ user, socket }) {
       .then((res) => res.json())
       .then((data) => {
         // handle the response data here, for example:
-        if (data.pending) {
-          showFeedback("Você já está em uma batalha pendente!")
+        if (data.id) {
+          showFeedback("Você tem uma batalha pendente!")
         } else {
           showFeedback("Nenhuma batalha pendente encontrada.");
         }

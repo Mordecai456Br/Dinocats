@@ -42,11 +42,17 @@ export default function JoinBattle({ user, socket }) {
     };
   }, [socket, inviteId, user.id]);
 
-  const joinBattle = () => {
+  const userHasPedingBattle = (userId) => {
+    fetch(`http://localhost:5000/users/${userId}/pending_battle`)
+      .then((res) => res.json())
+      .catch(console.error);
+  };
+
+  /*const joinBattle = () => {
     if (!inviteId) return showFeedback("Digite o inviteId!");
     socket.emit("joinBattleRoom", { inviteId, userId: user.id });
   };
-
+*/
   const abandonBattle = () => {
     if (!inviteId) return showFeedback("Digite o inviteId!");
     socket.emit("leaveBattleRoom", { inviteId, userId: user.id });
@@ -56,15 +62,17 @@ export default function JoinBattle({ user, socket }) {
     <div>
       <h2>Entre numa batalha</h2>
       <div>
-        <input
+
+        {/*<input
           id="joinBattleInviteId"
           type="text"
           placeholder="inviteId"
           value={inviteId}
           onChange={(e) => setInviteId(e.target.value)}
           disabled={inBattle} // não permite mudar inviteId dentro da batalha
-        />
-        <button onClick={joinBattle} disabled={inBattle}>
+        />*/}
+
+        <button onClick={() => userHasPedingBattle(user.id)} disabled={inBattle}>
           Join Battle
         </button>
         <button onClick={abandonBattle} disabled={!inBattle}>

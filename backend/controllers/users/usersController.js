@@ -20,6 +20,17 @@ module.exports = {
       res.status(500).json({ error: err.message });
     }
   },
+  
+  async userPendingBattle(req, res) {
+    try {
+      const user = await UsersModel.getById(req.params.id);
+      if (!user) return res.status(404).json({ message: 'User not found' });
+      const pendingBattle = await UsersModel.userPendingBattle(user.id);
+      res.json(pendingBattle);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
 
   async getDinocatsByUserId(req, res) {
         try {

@@ -1,4 +1,5 @@
 const supabase = require('../../config/supabaseClient'); // seu client supabase-js
+
 const table = 'battles';
 
 module.exports = {
@@ -14,10 +15,12 @@ module.exports = {
     return data;
   },
 
-  async create({ user1_id, user2_id, dinocat1_id, dinocat2_id, winner_id, started_at, ended_at, invite_id }) {
+  
+
+  async create({ user1_id, user2_id, dinocat1_id, dinocat2_id, winner_id, started_at, ended_at, invite_id, status }) {
     const { data, error } = await supabase
       .from(table)
-      .insert([{ user1_id, user2_id, dinocat1_id, dinocat2_id, winner_id, started_at, ended_at, invite_id }])
+      .insert([{ user1_id, user2_id, dinocat1_id, dinocat2_id, winner_id, started_at, ended_at, invite_id, status }])
       .select()
       .single();
     if (error) throw error;

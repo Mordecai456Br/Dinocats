@@ -1,4 +1,5 @@
 const supabase = require('../../config/supabaseClient'); // seu client supabase-js
+
 const table = 'users';
 
 module.exports = {
@@ -10,6 +11,12 @@ module.exports = {
 
   async getById(id) {
     const { data, error } = await supabase.from(table).select('*').eq('id', id).single();
+    if (error) throw error;
+    return data;
+  },
+
+  async userPendingBattle(user_id) {
+    const { data, error } = await supabase.from(table).select(`battles!user1_id(id)`).eq('id', user_id).eq('battles.status','pending').single();
     if (error) throw error;
     return data;
   },

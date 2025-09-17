@@ -12,6 +12,7 @@ router.get('/users/:id', UsersController.getById);
 router.get('/users/:id/dinocats', UsersController.getDinocatsByUserId);
 router.get('/users/:id/open_invites', InvitesController.getOpenInvites);
 router.get('/users/:id/invites', InvitesController.getUserInvites);
+router.get('/users/:id/pending_battle', UsersController.userPendingBattle);
 
 router.post('/users', UsersController.create);
 

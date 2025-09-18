@@ -31,18 +31,58 @@ export default function InvitesList({ userId, onAcceptInvite, socket }) {
     };
   }, []); // só roda uma vez ao montar
 
+  const userHasPedingBattle = () => {
+    fetch(`http://localhost:5000/users/${userId}/pending_battle`)
+      .then((res) => res.json())
+      .then((data) => {
+
+        if (data.id) {
+          setBattleId(data.id);
+          socket.emit('joinBattleRoom', { battleId: data.id, userId });
+          showFeedback(`Você entrou na batalha ${data.id}`)
+        } else {
+          showFeedback("Nenhuma batalha pendente encontrada.");
+        }
+      });
+  }
+
   const handleAcceptInvite = async (invite, accept, opencase) => {
+
+    const userRes = await fetch(`http://localhost:5000/users/${userId}`);
+    const userData = await userRes.json();
+
+    if (userData.is_on_battle_mode) {
+      return showFeedback("Você já está em modo de batalha!");
+    }
+
+    const battleRes = await fetch(`http://localhost:5000/users/${userId}/pending_battle`);
+    const pendingBattle = await battleRes.json();
+
+    if (pendingBattle && pendingBattle.id) {
+      return showFeedback("Você já possui uma batalha pendente!");
+    }
+
+
     await fetch(`http://localhost:5000/invites/${invite.id}/accept`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ accepted: accept, opencase: opencase }),
     });
-    setInvites((prev) => prev.filter((i) => i.id !== invite.id));
-    // muda a tela localmente
 
-    if (socket) {
-      socket.emit("joinBattleRoom", { inviteId: invite.id, userId: userId });
-    }
+    setInvites((prev) => prev.filter((i) => i.id !== invite.id));
+
+    await fetch(`http://localhost:5000/battles`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user1_id: invite.user1_id,
+        user2_id: invite.user2_id,
+        invite_id: invite.id,
+        status: "pending",
+      }),
+    });
+
+    showFeedback("Batalha criada, clique em join!");
   };
 
 
@@ -65,7 +105,7 @@ export default function InvitesList({ userId, onAcceptInvite, socket }) {
     <div style={{ position: "absolute", top: 10, left: 10 }}>
       <button onClick={() => setOpen(!open)}>Notifications</button>
       {open && (
-        <div className="invite-list" style={{ background: "blue" }}>
+        <div className="invite-list" style={{ background: "light-gray" }}>
           <h3>Invites</h3>
           {invites.length === 0 ? (
             <p>None invatations</p>

@@ -42,7 +42,7 @@ export default function JoinBattle({ user, socket }) {
       console.log(`${data.userId} entrou na sala ${data.battleId}`)
     })
 
-    socket.on('message', ({userId, message, socket}) => {
+    socket.on('message', ({ userId, message, socket }) => {
       console.log(`${socket} | user ${userId}: ${message}`)
     })
     return () => {
@@ -59,8 +59,8 @@ export default function JoinBattle({ user, socket }) {
         // handle the response data here, for example:
         if (data.id) {
           setBattleId(data.id);
-          showFeedback("Você tem uma batalha pendente!")
           socket.emit('joinBattleRoom', { battleId: data.id, userId });
+          showFeedback(`Você entrou na batalha ${data.id}`)
         } else {
           showFeedback("Nenhuma batalha pendente encontrada.");
         }

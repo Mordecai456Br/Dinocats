@@ -38,15 +38,9 @@ module.exports = {
     return data;
   },
 
-  async update(id, { user2_id, accepted, opencase, created_at, replied_at }) {
+  async update(id, updates) {
     const { data, error } = await supabase.from(table)
-      .update({
-        user2_id: user2_id ?? null,
-        accepted: accepted ?? false,
-        opencase: opencase ?? true,
-        created_at: created_at ?? null,
-        replied_at: replied_at ?? null
-      })
+      .update(updates)
       .eq('id', id)
       .select()
       .single();

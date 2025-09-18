@@ -27,7 +27,7 @@ let connectionsOnline = [];
 let connectionsLoggedOut = [];
 let idCounter = 1;
 
-const battleRooms = {}; // { inviteId: { players: [userId], status: 'waiting' | 'started' } }
+const battleRooms = {}; 
 
 function showConnectionStatus() {
   Utils.logWithTime(`Online: ${connectionsOnline.length} | Disconnected: ${connectionsLoggedOut.length}`);
@@ -43,20 +43,20 @@ io.on('connection', (socket) => {
   Utils.logWithTime(`✅➡️ CONECTADO:`, connectionObj.socket, connectionObj.id, `in: ${connectionObj.connectedAt} out: ${connectionObj.disconnectedAt}`);
   showConnectionStatus();
 
-  // Ping test
+  
   socket.on('ping', () => {
     const index = connectionsRegistered.findIndex(conn => conn.socket === socket.id);
     Utils.logWithTime('Ping recebido de', socket.id, connectionsRegistered[index].id);
     socket.emit('pong', { message: 'Pong do servidor!' });
   });
 
-  // Usuário logado
+  
   socket.on('loggedUser', (userId, callback) => {
     Utils.logWithTime(`Usuário logado: ${userId} (socket ${socket.id})`);
     if (callback) callback({ message: 'Usuário registrado com sucesso!' });
   });
 
-  // Desconexão
+  
   socket.on('disconnect', () => {
     const now = new Date().toLocaleString('pt-BR');
     const index = connectionsOnline.findIndex(conn => conn.socket === socket.id);

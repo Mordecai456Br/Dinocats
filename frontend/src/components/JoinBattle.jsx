@@ -4,6 +4,8 @@ export default function JoinBattle({ user, socket }) {
   const [inviteId, setInviteId] = useState("");
   const [inBattle, setInBattle] = useState(false); // controla se entrou na batalha
   const [feedback, setFeedback] = useState("");
+  const [message, setMessage] = useState("");
+  const [battleId, setBattleId] = useState(null);
 
   if (!user) return <p>Carregando...</p>;
 
@@ -36,9 +38,17 @@ export default function JoinBattle({ user, socket }) {
       setInviteId(""); // limpa campo
     });
 
+    socket.on('userJoined', (data) => {
+      console.log(`${data.userId} entrou na sala ${data.battleId}`)
+    })
+
+    socket.on('message', ({userId, message, socket}) => {
+      console.log(`${socket} | user ${userId}: ${message}`)
+    })
     return () => {
       socket.off("bothInRoom");
       socket.off("battleEnded");
+      socket.off('message');
     };
   }, [socket, inviteId, user.id]);
 
@@ -48,12 +58,21 @@ export default function JoinBattle({ user, socket }) {
       .then((data) => {
         // handle the response data here, for example:
         if (data.id) {
+          setBattleId(data.id);
           showFeedback("Você tem uma batalha pendente!")
+          socket.emit('joinBattleRoom', { battleId: data.id, userId });
         } else {
           showFeedback("Nenhuma batalha pendente encontrada.");
         }
       })
       .catch(console.error);
+  };
+
+  const sendMessage = () => {
+    if (!battleId) return showFeedback("Nenhuma batalha ativa!");
+    if (!message.trim()) return showFeedback("Mensagem vazia!");
+
+    socket.emit('sendMessage', { roomId: battleId, message: message, userId: user.id })
   };
 
   /*const joinBattle = () => {
@@ -81,9 +100,22 @@ export default function JoinBattle({ user, socket }) {
           disabled={inBattle} // não permite mudar inviteId dentro da batalha
         />*/}
 
+        <input
+          id="sendMessageInput"
+          type="text"
+          placeholder="message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button onClick={sendMessage} disabled={!battleId}>
+          SendMessage
+        </button>
+
+
         <button onClick={() => userHasPedingBattle(user.id)} disabled={inBattle}>
           Join Battle
         </button>
+
         <button onClick={abandonBattle} disabled={!inBattle}>
           Abandon
         </button>

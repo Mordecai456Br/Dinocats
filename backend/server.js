@@ -73,7 +73,16 @@ io.on('connection', (socket) => {
 
   // Entrar na sala de batalha
   
+  socket.on('joinBattleRoom', ({ battleId, userId}) => {
+    socket.join(battleId)
+    console.log(`User: ${userId}, socket: ${socket.id} | joined room ${battleId}`)
 
+    io.to(battleId).emit('userJoined', {userId, socket: socket.id, battleId})
+  });
+
+  socket.on('sendMessage', ({roomId, message, userId}) => {
+    io.to(roomId).emit('message', {userId, message: message, socket: socket.id})
+  })
 });
 
 server.listen(5000, () => Utils.logWithTime('Servidor rodando na porta 5000'));

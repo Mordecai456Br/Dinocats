@@ -10,9 +10,10 @@ export default function App() {
     const [user, setUser] = useState(null); // usuário logado
     const [selectedDinocat, setSelectedDinocat] = useState(null); // dinocat escolhido
     const [battleData, setBattleData] = useState(null); // dados da batalha
-    
+    const [battleId, setBattleId] = useState(null);
     const navigate = useNavigate();
     const socketRef = useRef(null);
+    
     
     const handleLogout = () => {
         setUser(null);
@@ -80,7 +81,7 @@ export default function App() {
                     socket={socketRef.current}
                     onBothInRoom={() => {navigate('/dinocat-selection')}}
                     handleLogout={handleLogout} 
-
+                    setBattleId={setBattleId}
 
                 />
             } />
@@ -91,8 +92,13 @@ export default function App() {
                     socket={socketRef.current}
                     onChoose={(dinocat) => {
                         setSelectedDinocat(dinocat);
-                        navigate('/battle');
+                        
                     }}
+                    onBothReady={() => {
+                        navigate('/battle')
+                    }}
+                    selectedDinocat={selectedDinocat}
+                    battleId={battleId}
                 />
             } />
 

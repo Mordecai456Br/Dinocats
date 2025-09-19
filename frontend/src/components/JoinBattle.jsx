@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function JoinBattle({ user, socket }) {
+export default function JoinBattle({ user, socket, battleId, setBattleId}) {
   const [inviteId, setInviteId] = useState("");
   const [inBattle, setInBattle] = useState(false); // controla se entrou na batalha
   const [feedback, setFeedback] = useState("");
   const [message, setMessage] = useState("");
-  const [battleId, setBattleId] = useState(null);
   const navigate = useNavigate();
   if (!user) return <p>Carregando...</p>;
 
@@ -26,7 +25,7 @@ export default function JoinBattle({ user, socket }) {
     if (!socket) return;
 
     // evento disparado quando todos estão na sala
-    socket.on("bothInRoom", ({ inviteId }) => {
+    socket.on("bothInRoom", () => {
     
         setInBattle(true);
 

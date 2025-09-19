@@ -3,8 +3,11 @@ import React, { useState, useEffect } from 'react';
 import DinocatCard from './DinocatCard';
 import '../css/dinocats.css';
 
-export default function DinocatSelection({ user, socket, roomId, onChoose }) {
+export default function DinocatSelection({ user, socket, battleId, onChoose, selectedDinocat, onBothReady }) {
   const [dinocats, setDinocats] = useState([]);
+  const [ready, setReady] = useState(false);       // se o player clicou ready
+  const [opponentReady, setOpponentReady] = useState(false); // se o outro player já está ready
+
 
   // Substitua o useEffect atual por este bloco
   useEffect(() => {
@@ -46,37 +49,75 @@ export default function DinocatSelection({ user, socket, roomId, onChoose }) {
 
     load();
 
-    if (!socket || !socket.current) return;
+    if (!socket) return;
     const fn = ({ dinocat }) => console.log("opponentSelected recebido:", dinocat);
-    socket.current.on("opponentSelected", fn);
+    socket.on("opponentSelected", fn);
     return () => {
-      socket.current.off("opponentSelected", fn);
+      socket.off("opponentSelected", fn);
     };
-  
-}, [user, socket]);
+
+  }, [user, socket]);
 
 
-const handleChoose = (dino) => {
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleOpponentReady = ({ userId: readyUserId, dinocat }) => {
+      if (readyUserId !== user.id) { // se não sou eu
+        setOpponentReady(true);
+        console.log("Oponente está ready com:", dinocat);
+      }
+    };
+
+    const handleBothReady = () => {
+      console.log("Ambos estão ready, pode ir para a batalha");
+      onBothReady(); // aqui podemos navegar para /battle
+    };
+
+    socket.on("opponentReady", handleOpponentReady);
+    socket.on("bothReady", handleBothReady);
+
+    return () => {
+      socket.off("opponentReady", handleOpponentReady);
+      socket.off("bothReady", handleBothReady);
+    };
+  }, [socket, user.id, selectedDinocat]);
+
+  const handleChoose = (dino) => {
     if (typeof onChoose === "function") onChoose(dino);
-
+    console.log(battleId)
+    console.log(socket)
     // envia a seleção para a sala via socket
-    if (socket && socket.current && roomId) {
-      socket.current.emit("dinocatSelected", { roomId: String(roomId), dinocat: dino });
-      console.log("enviei dinocatSelected", dino, "room", roomId);
+    if (battleId) {
+      // ✅ correto no cliente
+      socket.emit("dinocatSelected", { roomId: battleId, dinocat: dino });
+
+      console.log("enviei dinocatSelected", dino, "room", battleId);
     } else {
       console.warn("Não posso enviar dinocatSelected — socket/roomId ausente");
     }
   };
 
-return (
-  <div className="dinocat-selection-container">
-    {dinocats.map(dino => (
-      <DinocatCard
-        key={dino.id}
-        dino={dino}
-        onChoose={handleChoose}
-      />
-    ))}
-  </div>
-);
+  return (
+    <div className="dinocat-selection-container">
+      {dinocats.map(dino => (
+        <DinocatCard
+          key={dino.id}
+          dino={dino}
+          onChoose={handleChoose}
+        />
+      ))}
+      <button
+        onClick={() => {
+          if (!selectedDinocat) return alert("Escolha um Dinocat primeiro!");
+          setReady(true);
+          socket.emit("playerReady", { battleId, userId: user.id, dinocat: selectedDinocat });
+        }}
+        disabled={ready} // só pode clicar uma vez
+      >
+        Ready
+      </button>
+
+    </div>
+  );
 }

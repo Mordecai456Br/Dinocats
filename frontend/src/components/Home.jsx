@@ -2,7 +2,7 @@ import InvitesList from "./InvitesList";
 import JoinBattle from "./JoinBattle";
 
 
-export default function Home({ user, socket ,onAcceptInvite, handleLogout }) {
+export default function Home({ user, socket ,onAcceptInvite, handleLogout, setBattleId }) {
   if (!user) return <p>Carregando...</p>; // evita erro até o user estar disponível
   
   return (
@@ -11,7 +11,7 @@ export default function Home({ user, socket ,onAcceptInvite, handleLogout }) {
       <h1>Bem-vindo, {user.name}</h1>
       <button onClick={handleLogout}> logout </button>
       <InvitesList userId={user.id} socket={socket} onAcceptInvite={onAcceptInvite}/>
-      <JoinBattle user={user} socket={socket}></JoinBattle>
+      <JoinBattle user={user} socket={socket} setBattleId={setBattleId}></JoinBattle>
     </div>
   );
 }

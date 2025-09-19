@@ -81,11 +81,34 @@ io.on('connection', (socket) => {
     const usersInRoom = room ? room.size : 0;
     console.log(`Usuários na sala ${battleId}: ${usersInRoom}`);
 
-    if(usersInRoom === 2){
+    if (usersInRoom === 2) {
       io.to(battleId).emit('bothInRoom', { battleId })
     }
     io.to(battleId).emit('userJoined', { userId, socket: socket.id, battleId })
   });
+
+  socket.on("dinocatSelected", ({ roomId, dinocat }) => {
+    console.log(`Dinocat selecionado na sala ${roomId}:`, dinocat);
+
+    // repassa pra todos da sala, menos quem enviou
+    socket.to(roomId).emit("opponentSelected", { dinocat });
+  });
+
+  socket.on("playerReady", ({ battleId, userId, dinocat }) => {
+    if (!battleRooms[battleId]) battleRooms[battleId] = { players: {} };
+
+    battleRooms[battleId].players[userId] = { ready: true, dinocat };
+
+    // Avisar o outro jogador
+    socket.to(battleId).emit("opponentReady", { userId, dinocat });
+
+    // Se ambos estiverem ready, disparar bothReady
+    const players = Object.values(battleRooms[battleId].players);
+    if (players.length === 2 && players.every(p => p.ready)) {
+      io.to(battleId).emit("bothReady");
+    }
+  });
+
 
   socket.on('sendMessage', ({ roomId, message, userId }) => {
     io.to(roomId).emit('message', { userId, message: message, socket: socket.id })

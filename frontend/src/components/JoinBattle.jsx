@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function JoinBattle({ user, socket }) {
   const [inviteId, setInviteId] = useState("");
@@ -6,23 +7,41 @@ export default function JoinBattle({ user, socket }) {
   const [feedback, setFeedback] = useState("");
   const [message, setMessage] = useState("");
   const [battleId, setBattleId] = useState(null);
-
+  const navigate = useNavigate();
   if (!user) return <p>Carregando...</p>;
 
-  const showFeedback = (message) => {
-    setFeedback(message);
-    setTimeout(() => setFeedback(""), 3000);
+  const showFeedback = (message, time, consoleLog) => {
+    if (!time) time = 3000
+    if (consoleLog === true) {
+      setFeedback(message);
+      console.log(message)
+    } else {
+      setFeedback(message);
+
+    }
+    setTimeout(() => setFeedback(""), time);
   };
 
   useEffect(() => {
     if (!socket) return;
 
     // evento disparado quando todos estão na sala
-    socket.on("bothInRoom", ({ inviteId: roomId }) => {
-      if (roomId === inviteId) {
+    socket.on("bothInRoom", ({ inviteId }) => {
+    
         setInBattle(true);
-        showFeedback("Todos na sala! Você pode iniciar a batalha.");
-      }
+
+        let seconds = 5;
+        setFeedback(`Todos na sala! Redirecionando para batalha em ${seconds}s`);
+        const timer = setInterval(() => {
+          seconds -= 1;
+          if (seconds > 0) {
+            setFeedback(`Todos na sala! Redirecionando para batalha em ${seconds}s`);
+          } else {
+            clearInterval(timer);
+            setFeedback(""); 
+            navigate("/dinocat-selection"); // redireciona
+          }
+        }, 1000);
     });
 
     // evento disparado quando a batalha termina
@@ -39,7 +58,7 @@ export default function JoinBattle({ user, socket }) {
     });
 
     socket.on('userJoined', (data) => {
-      console.log(`${data.userId} entrou na sala ${data.battleId}`)
+      console.log(`user ${data.userId} entrou na sala ${data.battleId}`)
     })
 
     socket.on('message', ({ userId, message, socket }) => {
@@ -48,9 +67,11 @@ export default function JoinBattle({ user, socket }) {
     return () => {
       socket.off("bothInRoom");
       socket.off("battleEnded");
+      socket.off("joinBattleRoom");
+      socket.off("userJoined");
       socket.off('message');
     };
-  }, [socket, inviteId, user.id]);
+  }, [socket, inviteId, user.id, navigate]);
 
   const userHasPedingBattle = (userId) => {
     fetch(`http://localhost:5000/users/${userId}/pending_battle`)
@@ -89,6 +110,7 @@ export default function JoinBattle({ user, socket }) {
   return (
     <div>
       <h2>Entre numa batalha</h2>
+      {battleId && <p>batalha atual: {battleId}</p>}
       <div>
 
         {/*<input

@@ -27,7 +27,7 @@ let connectionsOnline = [];
 let connectionsLoggedOut = [];
 let idCounter = 1;
 
-const battleRooms = {}; 
+const battleRooms = {};
 
 function showConnectionStatus() {
   Utils.logWithTime(`Online: ${connectionsOnline.length} | Disconnected: ${connectionsLoggedOut.length}`);
@@ -43,20 +43,20 @@ io.on('connection', (socket) => {
   Utils.logWithTime(`✅➡️ CONECTADO:`, connectionObj.socket, connectionObj.id, `in: ${connectionObj.connectedAt} out: ${connectionObj.disconnectedAt}`);
   showConnectionStatus();
 
-  
+
   socket.on('ping', () => {
     const index = connectionsRegistered.findIndex(conn => conn.socket === socket.id);
     Utils.logWithTime('Ping recebido de', socket.id, connectionsRegistered[index].id);
     socket.emit('pong', { message: 'Pong do servidor!' });
   });
 
-  
+
   socket.on('loggedUser', (userId, callback) => {
     Utils.logWithTime(`Usuário logado: ${userId} (socket ${socket.id})`);
     if (callback) callback({ message: 'Usuário registrado com sucesso!' });
   });
 
-  
+
   socket.on('disconnect', () => {
     const now = new Date().toLocaleString('pt-BR');
     const index = connectionsOnline.findIndex(conn => conn.socket === socket.id);
@@ -72,16 +72,23 @@ io.on('connection', (socket) => {
   });
 
   // Entrar na sala de batalha
-  
-  socket.on('joinBattleRoom', ({ battleId, userId}) => {
+
+  socket.on('joinBattleRoom', ({ battleId, userId }) => {
     socket.join(battleId)
     console.log(`User: ${userId}, socket: ${socket.id} | joined room ${battleId}`)
 
-    io.to(battleId).emit('userJoined', {userId, socket: socket.id, battleId})
+    const room = io.sockets.adapter.rooms.get(battleId);
+    const usersInRoom = room ? room.size : 0;
+    console.log(`Usuários na sala ${battleId}: ${usersInRoom}`);
+
+    if(usersInRoom === 2){
+      io.to(battleId).emit('bothInRoom', { battleId })
+    }
+    io.to(battleId).emit('userJoined', { userId, socket: socket.id, battleId })
   });
 
-  socket.on('sendMessage', ({roomId, message, userId}) => {
-    io.to(roomId).emit('message', {userId, message: message, socket: socket.id})
+  socket.on('sendMessage', ({ roomId, message, userId }) => {
+    io.to(roomId).emit('message', { userId, message: message, socket: socket.id })
   })
 });
 

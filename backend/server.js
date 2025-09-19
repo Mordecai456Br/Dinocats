@@ -73,41 +73,50 @@ io.on('connection', (socket) => {
 
   // Entrar na sala de batalha
 
+  // Evento: jogador entra na sala de batalha
   socket.on('joinBattleRoom', ({ battleId, userId }) => {
-    socket.join(battleId)
-    console.log(`User: ${userId}, socket: ${socket.id} | joined room ${battleId}`)
+    socket.join(battleId);
+    console.log(`User: ${userId}, socket: ${socket.id} | joined room ${battleId}`);
 
     const room = io.sockets.adapter.rooms.get(battleId);
     const usersInRoom = room ? room.size : 0;
     console.log(`Usuários na sala ${battleId}: ${usersInRoom}`);
 
+    // Se tiver 2 jogadores na sala, avisa ambos
     if (usersInRoom === 2) {
-      io.to(battleId).emit('bothInRoom', { battleId })
+      io.to(battleId).emit('bothInRoom', { battleId });
     }
-    io.to(battleId).emit('userJoined', { userId, socket: socket.id, battleId })
+
+    // Aviso que um usuário entrou (sempre)
+    io.to(battleId).emit('userJoined', { userId, socket: socket.id, battleId });
   });
 
+  // Evento: jogador seleciona Dinocat
   socket.on("dinocatSelected", ({ roomId, dinocat }) => {
     console.log(`Dinocat selecionado na sala ${roomId}:`, dinocat);
 
-    // repassa pra todos da sala, menos quem enviou
+    // Repassa pra todos na sala, menos quem enviou
     socket.to(roomId).emit("opponentSelected", { dinocat });
   });
 
+  // Evento: jogador clica Ready
   socket.on("playerReady", ({ battleId, userId, dinocat }) => {
     if (!battleRooms[battleId]) battleRooms[battleId] = { players: {} };
 
+    // Marca este jogador como ready
     battleRooms[battleId].players[userId] = { ready: true, dinocat };
 
-    // Avisar o outro jogador
+    // Avisa o outro jogador que este jogador está ready
     socket.to(battleId).emit("opponentReady", { userId, dinocat });
 
-    // Se ambos estiverem ready, disparar bothReady
+    // Confirma se ambos estão ready
     const players = Object.values(battleRooms[battleId].players);
     if (players.length === 2 && players.every(p => p.ready)) {
+      console.log(`Ambos os jogadores na sala ${battleId} estão prontos!`);
       io.to(battleId).emit("bothReady");
     }
   });
+
 
 
   socket.on('sendMessage', ({ roomId, message, userId }) => {

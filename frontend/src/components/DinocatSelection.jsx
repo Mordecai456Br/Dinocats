@@ -4,74 +4,59 @@ import DinocatCard from './DinocatCard';
 import '../css/dinocats.css';
 
 export default function DinocatSelection({ user, socket, battleId, onChoose, selectedDinocat, onBothReady }) {
+  // Lista de Dinocats do jogador
   const [dinocats, setDinocats] = useState([]);
-  const [ready, setReady] = useState(false);       // se o player clicou ready
-  const [opponentReady, setOpponentReady] = useState(false); // se o outro player já está ready
 
+  // Estado de readiness
+  const [ready, setReady] = useState(false);          // se o jogador clicou "Ready"
+  const [opponentReady, setOpponentReady] = useState(false); // se o oponente está ready
 
-  // Substitua o useEffect atual por este bloco
+  // ------------------------------
+  // Carrega Dinocats do jogador
+  // ------------------------------
   useEffect(() => {
     if (!user) return;
 
-    // função async para facilitar await/try-catch
-    const load = async () => {
+    const loadDinocats = async () => {
       try {
         const res = await fetch(`http://localhost:5000/users/${user.id}/dinocats`);
         const data = await res.json();
 
-        // POSSÍVEIS formatos esperados da API:
-        // 1) Array direto -> data = [ ... ]
-        // 2) Objeto com rows -> { rows: [...] }
-        // 3) Objeto com data -> { data: [...] }
-        // 4) Objeto único -> { id: 1, name: 'x' } (não é lista)
+        // Garante que sempre teremos um array para map
+        if (Array.isArray(data)) setDinocats(data);
+        else if (Array.isArray(data.rows)) setDinocats(data.rows);
+        else if (Array.isArray(data.data)) setDinocats(data.data);
+        else if (data && typeof data === "object") setDinocats([data]);
+        else setDinocats([]);
 
-        if (Array.isArray(data)) {
-          setDinocats(data);
-        } else if (Array.isArray(data.rows)) {
-          setDinocats(data.rows);
-        } else if (Array.isArray(data.data)) {
-          setDinocats(data.data);
-        } else {
-          // fallback: se veio um único item, transforma em array; se for inesperado, zera
-          if (data && typeof data === "object" && Object.keys(data).length > 0) {
-            // converte objeto único em array (para evitar crash no .map)
-            setDinocats([data]);
-          } else {
-            setDinocats([]); // garante que dinocats seja sempre array
-          }
-          console.warn("Resposta inesperada ao buscar dinocats:", data);
-        }
       } catch (err) {
         console.error("Erro ao carregar dinocats:", err);
-        setDinocats([]); // evita crash caso a requisição falhe
+        setDinocats([]);
       }
     };
 
-    load();
+    loadDinocats();
 
-    if (!socket) return;
-    const fn = ({ dinocat }) => console.log("opponentSelected recebido:", dinocat);
-    socket.on("opponentSelected", fn);
-    return () => {
-      socket.off("opponentSelected", fn);
-    };
+  }, [user]);
 
-  }, [user, socket]);
-
-
+  // ------------------------------
+  // Eventos do Socket
+  // ------------------------------
   useEffect(() => {
     if (!socket) return;
 
+    // Oponente marcou ready
     const handleOpponentReady = ({ userId: readyUserId, dinocat }) => {
-      if (readyUserId !== user.id) { // se não sou eu
+      if (readyUserId !== user.id) {
         setOpponentReady(true);
         console.log("Oponente está ready com:", dinocat);
       }
     };
 
+    // Ambos estão ready
     const handleBothReady = () => {
-      console.log("Ambos estão ready, pode ir para a batalha");
-      onBothReady(); // aqui podemos navegar para /battle
+      console.log("Ambos estão ready! Avançando para a batalha...");
+      if (typeof onBothReady === "function") onBothReady();
     };
 
     socket.on("opponentReady", handleOpponentReady);
@@ -81,23 +66,36 @@ export default function DinocatSelection({ user, socket, battleId, onChoose, sel
       socket.off("opponentReady", handleOpponentReady);
       socket.off("bothReady", handleBothReady);
     };
-  }, [socket, user.id, selectedDinocat]);
+  }, [socket, user.id, onBothReady]);
 
+  // ------------------------------
+  // Seleção de Dinocat
+  // ------------------------------
   const handleChoose = (dino) => {
     if (typeof onChoose === "function") onChoose(dino);
-    console.log(battleId)
-    console.log(socket)
-    // envia a seleção para a sala via socket
-    if (battleId) {
-      // ✅ correto no cliente
-      socket.emit("dinocatSelected", { roomId: battleId, dinocat: dino });
 
-      console.log("enviei dinocatSelected", dino, "room", battleId);
+    if (battleId) {
+      socket.emit("dinocatSelected", { roomId: battleId, dinocat: dino });
+      console.log("Dinocat selecionado enviado:", dino, "para room", battleId);
     } else {
       console.warn("Não posso enviar dinocatSelected — socket/roomId ausente");
     }
   };
 
+  // ------------------------------
+  // Ready do jogador
+  // ------------------------------
+  const handlePlayerReady = () => {
+    if (!selectedDinocat) return alert("Escolha um Dinocat primeiro!");
+    setReady(true);
+
+    socket.emit("playerReady", { battleId, userId: user.id, dinocat: selectedDinocat });
+    console.log("Enviei playerReady com:", selectedDinocat);
+  };
+
+  // ------------------------------
+  // JSX
+  // ------------------------------
   return (
     <div className="dinocat-selection-container">
       {dinocats.map(dino => (
@@ -107,17 +105,15 @@ export default function DinocatSelection({ user, socket, battleId, onChoose, sel
           onChoose={handleChoose}
         />
       ))}
+
       <button
-        onClick={() => {
-          if (!selectedDinocat) return alert("Escolha um Dinocat primeiro!");
-          setReady(true);
-          socket.emit("playerReady", { battleId, userId: user.id, dinocat: selectedDinocat });
-        }}
-        disabled={ready} // só pode clicar uma vez
+        onClick={handlePlayerReady}
+        disabled={ready} // impede múltiplos clicks
       >
         Ready
       </button>
 
+      {opponentReady && <p>Oponente está pronto!</p>}
     </div>
   );
 }

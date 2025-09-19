@@ -1,0 +1,353 @@
+.desktop2 {
+    width: 100%;
+    position: relative;
+    background-color: #fff;
+    height: 1024px;
+    overflow: hidden;
+    text-align: left;
+    font-size: 24px;
+    color: #fff;
+    font-family: Inter;
+}
+
+.desktop2Child {
+    position: absolute;
+    top: 377px;
+    left: 0px;
+    border-radius: 0px 16px 0px 0px;
+    background-color: #a58bda;
+    width: 391px;
+    height: 647px;
+}
+
+.desktop2Item {
+    position: absolute;
+    top: 857px;
+    left: 390px;
+    background-color: #a58bda;
+    width: 672px;
+    height: 167px;
+}
+
+.desktop2Inner {
+    position: absolute;
+    top: 816px;
+    left: 1061px;
+    border-radius: 16px 0px 0px 0px;
+    background-color: #a58bda;
+    width: 379px;
+    height: 209px;
+}
+
+.plataformIcon {
+    position: absolute;
+    top: 621px;
+    left: 1040px;
+    width: 351.5px;
+    height: 149px;
+    object-fit: contain;
+}
+
+.plataformIcon2 {
+    position: absolute;
+    top: 703px;
+    left: 474px;
+    width: 351.5px;
+    height: 149px;
+    object-fit: contain;
+}
+
+.dinocatFight {
+    position: absolute;
+    top: 396px;
+    left: 19px;
+    width: 1065px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.dinocatcard {
+    border-radius: 16px 16px 0px 0px;
+    background-color: #170e28;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    gap: 24px;
+}
+
+.frameParent {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.pergolanossauroParent {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0px;
+}
+
+.pergolanossauro {
+    position: relative;
+}
+
+.entj {
+    position: relative;
+    font-size: 16px;
+}
+
+.hp250Parent {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+}
+
+.hp2 {
+    white-space: pre-wrap;
+}
+
+.span {
+    color: #80b9ff;
+}
+
+.healthbarParent {
+    width: 220px;
+    position: relative;
+    border-radius: 8px;
+    height: 20px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.healthbar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 220px;
+    height: 20px;
+}
+
+.healthbarChild {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-radius: 8px;
+    background-color: #3d9900;
+    width: 220px;
+    height: 20px;
+}
+
+.healthbarItem {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    border-radius: 7px;
+    background-color: #b2ff80;
+    width: 218px;
+    height: 18px;
+}
+
+.defensebarChild {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-radius: 8px;
+    background-color: #004599;
+    width: 220px;
+    height: 20px;
+}
+
+.defensebarItem {
+    position: absolute;
+    top: 0.5px;
+    left: 1px;
+    border-radius: 7px;
+    background-color: #80b9ff;
+    width: 54.5px;
+    height: 18px;
+}
+
+.emotionsgroup {
+    align-self: stretch;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 12px;
+    font-size: 16px;
+}
+
+.emotion {
+    border-radius: 10px;
+    background-color: #2b194d;
+    border: 1px solid #55329a;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 4px 10px;
+}
+
+.raivoso {
+    align-self: stretch;
+    position: relative;
+    font-weight: 600;
+}
+
+.geminiGeneratedImageQj4e64qIcon {
+    width: 298px;
+    position: relative;
+    max-height: 100%;
+    object-fit: cover;
+}
+
+.skills {
+    align-self: stretch;
+    border-radius: 0px 0px 0px 16px;
+    background-color: #160e28;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px 0px 30px 20px;
+    gap: 12px;
+    font-size: 20px;
+}
+
+.skillsgroup {
+    width: 982px;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 10px;
+    font-size: 16px;
+    color: #2b194d;
+}
+
+.skill {
+    border-radius: 16px;
+    background-color: #e1d8f3;
+    border: 2px solid #8865cd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 32px;
+    gap: 4px;
+}
+
+.parent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.div {
+    position: relative;
+    font-weight: 600;
+}
+
+.type {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.emotion4 {
+    border-radius: 10px;
+    background-color: #2b194d;
+    border: 1px solid #55329a;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 4px 10px;
+    color: #fff;
+}
+
+.frameGroup {
+    position: absolute;
+    top: 389px;
+    left: 528px;
+    width: 313px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    color: #2b194d;
+}
+
+.pergolanossauroWrapper {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.frameContainer {
+    position: absolute;
+    top: 835px;
+    left: 1080px;
+    border-radius: 16px 0px 0px 0px;
+    background-color: #160e28;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 30px 20px;
+    box-sizing: border-box;
+    gap: 24px;
+}
+
+.hp98 {
+    position: relative;
+    white-space: pre-wrap;
+}
+
+.defensebarChild4 {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    border-radius: 7px;
+    background-color: #b2ff80;
+    width: 210px;
+    height: 18px;
+}
+
+.frameParent3 {
+    position: absolute;
+    top: 311px;
+    left: 1060px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    color: #2b194d;
+}
+
+.geminiGeneratedImageQj4e64qIcon2 {
+    position: absolute;
+    top: 432px;
+    left: 411px;
+    width: 523.3px;
+    height: 456.8px;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+.geminiGeneratedImageQj4e64qIcon3 {
+    position: absolute;
+    top: 366px;
+    left: 957px;
+    width: 464px;
+    height: 382px;
+    object-fit: cover;
+}

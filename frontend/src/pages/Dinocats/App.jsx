@@ -13,14 +13,14 @@ export default function App() {
     const [battleId, setBattleId] = useState(null);
     const navigate = useNavigate();
     const socketRef = useRef(null);
-    
-    
+
+
     const handleLogout = () => {
         setUser(null);
-        sessionStorage.removeItem("user"); 
+        sessionStorage.removeItem("user");
         navigate("/");
     };
-    
+
     useEffect(() => {
 
         socketRef.current = io('http://localhost:5000');
@@ -79,8 +79,8 @@ export default function App() {
                 <Home
                     user={user}
                     socket={socketRef.current}
-                    onBothInRoom={() => {navigate('/dinocat-selection')}}
-                    handleLogout={handleLogout} 
+                    onBothInRoom={() => { navigate('/dinocat-selection') }}
+                    handleLogout={handleLogout}
                     setBattleId={setBattleId}
 
                 />
@@ -92,7 +92,7 @@ export default function App() {
                     socket={socketRef.current}
                     onChoose={(dinocat) => {
                         setSelectedDinocat(dinocat);
-                        
+
                     }}
                     onBothReady={() => {
                         navigate('/battle')
@@ -106,11 +106,20 @@ export default function App() {
                 <Battle
                     user={user}
                     socket={socketRef.current}
-                    dinocat={selectedDinocat}
+                    selectedDinocat={selectedDinocat}
                     onEndBattle={() => {
                         setSelectedDinocat(null);
                         setBattleData(null);
                         navigate('/home');
+                    }}
+                    opponentDino={{
+                        name: "Pepessauro",
+                        image: "/images/pepessauro.png",
+                        skills: [
+                            { name: "Ataque Selvagem", damage: 20, type: "attack" },
+                            { name: "Defesa Rápida", damage: 10, type: "defense" }
+                        ],
+                        hp: 98
                     }}
                 />
             } />

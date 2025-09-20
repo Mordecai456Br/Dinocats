@@ -56,6 +56,10 @@ export default function DinocatSelection({ user, battleId, battleState, socket }
                 {/* Painel do Jogador */}
                 <div className="player-panel">
                     <h3>{user.name} (Você)</h3>
+                        {myPlayerState?.isReady 
+                            ? <p className="status-ready">✅ Você está pronto!</p>
+                            : <button onClick={handlePlayerReady} disabled={!myPlayerState?.dinocat}>Estou Pronto!</button>
+                        }
                     <div className="dinocat-list">
                         {myDinocats.map((dino) => (
                             <DinocatCard 
@@ -66,30 +70,27 @@ export default function DinocatSelection({ user, battleId, battleState, socket }
                             />
                         ))}
                     </div>
-                    {myPlayerState?.isReady 
-                        ? <p className="status-ready">✅ Você está pronto!</p>
-                        : <button onClick={handlePlayerReady} disabled={!myPlayerState?.dinocat}>Estou Pronto!</button>
-                    }
                 </div>
 
                 {/* Painel do Oponente */}
                 <div className="opponent-panel">
-                    <h3>Oponente</h3>
                     {opponentState ? (
                         <>
+                        <h3>Oponente</h3>
+                        {opponentState.isReady 
+                            ? <p className="status-ready">✅ Oponente está pronto!</p>
+                            : <p className="status-waiting">Aguardando oponente...</p>
+                        }
                             {opponentState.dinocat ? (
                                 <DinocatCard dino={opponentState.dinocat} isSelected={true} />
                             ) : (
                                 <p>Oponente está escolhendo...</p>
                             )}
-                            {opponentState.isReady 
-                                ? <p className="status-ready">✅ Oponente está pronto!</p>
-                                : <p className="status-waiting">Aguardando oponente...</p>
-                            }
                         </>
                     ) : (
                         <p>Aguardando oponente entrar na sala...</p>
                     )}
+                    
                 </div>
             </div>
         </div>

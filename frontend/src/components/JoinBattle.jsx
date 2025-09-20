@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function JoinBattle({ user, socket, battleId, setBattleId}) {
+export default function JoinBattle({ user, socket, battleId, setBattleId }) {
   const [inviteId, setInviteId] = useState("");
   const [inBattle, setInBattle] = useState(false); // controla se entrou na batalha
   const [feedback, setFeedback] = useState("");
@@ -23,28 +23,26 @@ export default function JoinBattle({ user, socket, battleId, setBattleId}) {
 
   useEffect(() => {
     if (!socket) return;
+    let timer;
 
-    // evento disparado quando todos estão na sala
-    socket.on("bothInRoom", () => {
-    
-        setInBattle(true);
+    const handleBothInRoom = () => {
+      setInBattle(true);
 
-        let seconds = 5;
-        setFeedback(`Todos na sala! Redirecionando para batalha em ${seconds}s`);
-        const timer = setInterval(() => {
-          seconds -= 1;
-          if (seconds > 0) {
-            setFeedback(`Todos na sala! Redirecionando para batalha em ${seconds}s`);
-          } else {
-            clearInterval(timer);
-            setFeedback(""); 
-            navigate("/dinocat-selection"); // redireciona
-          }
-        }, 1000);
-    });
+      let seconds = 5;
+      setFeedback(`Todos na sala! Redirecionando para batalha em ${seconds}s`);
+      timer = setInterval(() => {
+        seconds -= 1;
+        if (seconds > 0) {
+          setFeedback(`Todos na sala! Redirecionando para batalha em ${seconds}s`);
+        } else {
+          clearInterval(timer);
+          setFeedback("Redirecionando...");
+          navigate("/dinocat-selection"); // redireciona
+        }
+      }, 1000);
+    };
 
-    // evento disparado quando a batalha termina
-    socket.on("battleEnded", ({ winnerId, abandonerId }) => {
+    const handleBattleEnded = ({ winnerId, abandonerId }) => {
       if (winnerId === user.id) {
         showFeedback("Você venceu! 🎉");
       } else if (abandonerId === user.id) {
@@ -53,34 +51,45 @@ export default function JoinBattle({ user, socket, battleId, setBattleId}) {
         showFeedback(`Usuário ${winnerId} venceu a batalha!`);
       }
       setInBattle(false);
-      setInviteId(""); // limpa campo
-    });
-
-    socket.on('userJoined', (data) => {
-      console.log(`user ${data.userId} entrou na sala ${data.battleId}`)
-    })
-
-    socket.on('message', ({ userId, message, socket }) => {
-      console.log(`${socket} | user ${userId}: ${message}`)
-    })
-    return () => {
-      socket.off("bothInRoom");
-      socket.off("battleEnded");
-      socket.off("joinBattleRoom");
-      socket.off("userJoined");
-      socket.off('message');
+      setBattleId(null); // limpa a batalha
     };
-  }, [socket, inviteId, user.id, navigate]);
 
-  const userHasPedingBattle = (userId) => {
+    const handleUserJoined = (data) => {
+      console.log(`user ${data.userId} entrou na sala ${data.battleId}`);
+    };
+
+    const handleMessage = ({ userId: msgUserId, message: msg, socket: socketId }) => {
+      console.log(`${socketId} | user ${msgUserId}: ${msg}`);
+    };
+
+    socket.on("bothInRoom", handleBothInRoom);
+    socket.on("battleEnded", handleBattleEnded);
+    socket.on("userJoined", handleUserJoined);
+    socket.on("message", handleMessage);
+
+    return () => {
+      socket.off("bothInRoom", handleBothInRoom);
+      socket.off("battleEnded", handleBattleEnded);
+      socket.off("userJoined", handleUserJoined);
+      socket.off("message", handleMessage);
+      if (timer) clearInterval(timer);
+    };
+  }, [socket, user.id, navigate, setBattleId]);
+
+  // Função para entrar em uma batalha pendente
+  const userHasPendingBattle = (userId) => {
     fetch(`http://localhost:5000/users/${userId}/pending_battle`)
-      .then((res) => res.json())
-      .then((data) => {
-        // handle the response data here, for example:
+      .then(res => res.json())
+      .then(data => {
         if (data.id) {
           setBattleId(data.id);
-          socket.emit('joinBattleRoom', { battleId: data.id, userId });
-          showFeedback(`Você entrou na batalha ${data.id}`)
+          if (socket && socket.connected) {
+            socket.emit('joinBattleRoom', { battleId: data.id, user });
+          } else {
+            showFeedback("Socket não está conectado. Tente novamente.");
+          }
+
+          showFeedback(`Você entrou na batalha ${data.id}`);
         } else {
           showFeedback("Nenhuma batalha pendente encontrada.");
         }
@@ -88,22 +97,21 @@ export default function JoinBattle({ user, socket, battleId, setBattleId}) {
       .catch(console.error);
   };
 
+  // Função para enviar mensagem
   const sendMessage = () => {
     if (!battleId) return showFeedback("Nenhuma batalha ativa!");
     if (!message.trim()) return showFeedback("Mensagem vazia!");
-
-    socket.emit('sendMessage', { roomId: battleId, message: message, userId: user.id })
+    socket.emit('sendMessage', { roomId: battleId, message, userId: user.id });
+    setMessage(""); // limpa input
   };
 
-  /*const joinBattle = () => {
-    if (!inviteId) return showFeedback("Digite o inviteId!");
-    socket.emit("joinBattleRoom", { inviteId, userId: user.id });
-  };
-*/
-
+  // Função para abandonar batalha
   const abandonBattle = () => {
-    if (!inviteId) return showFeedback("Digite o inviteId!");
-    socket.emit("leaveBattleRoom", { inviteId, userId: user.id });
+    if (!battleId) return showFeedback("Nenhuma batalha ativa!");
+    socket.emit("leaveBattleRoom", { battleId, userId: user.id });
+    setBattleId(null);
+    setInBattle(false);
+    showFeedback("Você abandonou a batalha 😢");
   };
 
   return (
@@ -133,7 +141,7 @@ export default function JoinBattle({ user, socket, battleId, setBattleId}) {
         </button>
 
 
-        <button onClick={() => userHasPedingBattle(user.id)} disabled={inBattle}>
+        <button onClick={() => userHasPendingBattle(user.id)} disabled={inBattle}>
           Join Battle
         </button>
 

@@ -1,126 +1,136 @@
-import { useState, useRef, useEffect } from 'react';
-import Login from '../../components/login';
-import Home from '../../components/Home';
-import DinocatSelection from '../../components/DinocatSelection';
-import Battle from '../../components/Battle';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 
+// Componentes
+import Login from '/src/components/Login';
+import Home from '/src/components/Home';
+import DinocatSelection from '/src/components/DinocatSelection';
+import Battle from '/src/components/Battle';
+
 export default function App() {
-    const [user, setUser] = useState(null); // usuário logado
-    const [selectedDinocat, setSelectedDinocat] = useState(null); // dinocat escolhido
-    const [battleData, setBattleData] = useState(null); // dados da batalha
+    const [user, setUser] = useState(null);
     const [battleId, setBattleId] = useState(null);
+    const [battleState, setBattleState] = useState(null);
+
     const navigate = useNavigate();
     const socketRef = useRef(null);
 
-
-    const handleLogout = () => {
-        setUser(null);
-        sessionStorage.removeItem("user");
-        navigate("/");
-    };
-
+    // Conecta o socket uma vez
     useEffect(() => {
+        socketRef.current = io('http://localhost:5000', { autoConnect: true });
+        const socket = socketRef.current;
 
-        socketRef.current = io('http://localhost:5000');
-
-
-        socketRef.current.on('connect', () => {
-            console.log('Conectado com id', socketRef.current.id);
-
-
-            socketRef.current.emit('ping');
-        });
-
-
-        socketRef.current.on('pong', (data) => {
-            console.log('Servidor respondeu:', data);
-        });
-
-        const savedUser = sessionStorage.getItem('user');
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
-        }
-
+        socket.on('connect', () => console.log('Socket conectado:', socket.id));
 
         return () => {
-            socketRef.current.disconnect();
+            socket.disconnect();
         };
     }, []);
 
+    // Efeito para gerenciar usuário online e eventos do socket
+    useEffect(() => {
+        const socket = socketRef.current;
+        if (!socket || !user) return;
+
+        // Marca jogador online
+        socket.emit('playerOnline', { userId: user.id });
+
+        // Reconexão
+        const handleConnect = () => {
+            socket.emit('playerOnline', { userId: user.id });
+        };
+        socket.on('connect', handleConnect);
+
+        // Recebe atualizações de batalha
+        const handleBattleStateUpdate = (newState) => {
+            console.log('Estado da batalha atualizado:', newState);
+            setBattleState(newState);
+        };
+        socket.on('battleStateUpdate', handleBattleStateUpdate);
+
+        // Início da batalha
+        const handleBattleStart = (finalState) => {
+            console.log('Iniciando batalha!', finalState);
+            setBattleState(finalState);
+            navigate('/battle');
+        };
+        socket.on('battleStart', handleBattleStart);
+
+        // Oponente desconectou
+        const handleOpponentDisconnected = ({ userId }) => {
+            alert(`Oponente ${userId} desconectou!`);
+            setBattleState(null);
+            setBattleId(null);
+            navigate('/home');
+        };
+        socket.on('opponentDisconnected', handleOpponentDisconnected);
+
+        return () => {
+            socket.off('connect', handleConnect);
+            socket.off('battleStateUpdate', handleBattleStateUpdate);
+            socket.off('battleStart', handleBattleStart);
+            socket.off('opponentDisconnected', handleOpponentDisconnected);
+        };
+    }, [user, navigate]);
+
+    // Recupera usuário da sessão ao montar
+    useEffect(() => {
+        const savedUser = sessionStorage.getItem('user');
+        if (savedUser) setUser(JSON.parse(savedUser));
+    }, []);
+
+    // Funções para Login/Logout
+    const handleLogin = useCallback((loggedUser) => {
+        setUser(loggedUser);
+        sessionStorage.setItem('user', JSON.stringify(loggedUser));
+        navigate('/home');
+    }, [navigate]);
+
+    const handleLogout = useCallback(() => {
+        setUser(null);
+        sessionStorage.removeItem("user");
+        navigate("/");
+    }, [navigate]);
+
+    // Entrar na batalha
+    const handleJoinBattle = (newBattleId) => {
+        setBattleId(newBattleId);
+        if (socketRef.current && user) {
+            socketRef.current.emit('joinBattleRoom', { battleId: newBattleId, user });
+            navigate('/dinocat-selection');
+        }
+    };
+
     return (
-
         <Routes>
-            <Route path='/' element={
-                <Login
-                    onLogin={(loggedUser) => {
-                        setUser(loggedUser);
-                        sessionStorage.setItem('user', JSON.stringify(loggedUser))
-                        navigate('/home');
-
-                        // registra o usuário no servidor
-                        if (socketRef.current && socketRef.current.connected) {
-                            socketRef.current.emit('loggedUser', loggedUser.id);
-                            console.log(`Usuário ${loggedUser.name} logado no servidor`);
-                        } else {
-                            // caso ainda não tenha conectado
-                            socketRef.current.on('connect', () => {
-                                socketRef.current.emit('loggedUser', loggedUser.id);
-                                console.log(`Usuário ${loggedUser.name} se conectou`);
-                            });
-                        }
-                    }}
-                />
-            }
-            />
+            <Route path='/' element={<Login onLogin={handleLogin} />} />
 
             <Route path='/home' element={
                 <Home
                     user={user}
                     socket={socketRef.current}
-                    onBothInRoom={() => { navigate('/dinocat-selection') }}
+                    onJoinBattle={handleJoinBattle}
                     handleLogout={handleLogout}
                     setBattleId={setBattleId}
-
+                    battleId={battleId}
                 />
             } />
 
             <Route path='/dinocat-selection' element={
                 <DinocatSelection
                     user={user}
-                    socket={socketRef.current}
-                    onChoose={(dinocat) => {
-                        setSelectedDinocat(dinocat);
-
-                    }}
-                    onBothReady={() => {
-                        navigate('/battle')
-                    }}
-                    selectedDinocat={selectedDinocat}
                     battleId={battleId}
+                    battleState={battleState}
+                    socket={socketRef.current}
                 />
             } />
 
             <Route path='/battle' element={
                 <Battle
                     user={user}
+                    battleState={battleState}
                     socket={socketRef.current}
-                    selectedDinocat={selectedDinocat}
-                    onEndBattle={() => {
-                        setSelectedDinocat(null);
-                        setBattleData(null);
-                        navigate('/home');
-                    }}
-                    opponentDino={{
-                        name: "Pepessauro",
-                        image: "/images/pepessauro.png",
-                        skills: [
-                            { name: "Ataque Selvagem", damage: 20, type: "attack" },
-                            { name: "Defesa Rápida", damage: 10, type: "defense" }
-                        ],
-                        hp: 98
-                    }}
                 />
             } />
         </Routes>

@@ -1,109 +1,97 @@
-// DinocatSelection.jsx
 import React, { useState, useEffect } from 'react';
 import DinocatCard from './DinocatCard';
 import '../css/dinocats.css';
 
-export default function DinocatSelection({ user, socket, battleId, onChoose, selectedDinocat, onBothReady }) {
-  const [dinocats, setDinocats] = useState([]);
-  const [ready, setReady] = useState(false);
-  const [opponentReady, setOpponentReady] = useState(false);
+// --- COMPONENTE DE UI, RECEBE ESTADO E ENVIA AÇÕES ---
+export default function DinocatSelection({ user, battleId, battleState, socket }) {
+    const [myDinocats, setMyDinocats] = useState([]);
 
-  // ------------------------------
-  // Carrega Dinocats do jogador
-  // ------------------------------
-  useEffect(() => {
-    if (!user) return;
+    // Busca os dinocats do usuário logado
+    useEffect(() => {
+        if (!user) return;
+        const loadDinocats = async () => {
+            try {
+                const res = await fetch(`http://localhost:5000/users/${user.id}/dinocats`);
+                const data = await res.json();
+                setMyDinocats(Array.isArray(data.rows) ? data.rows : []);
+            } catch (err) {
+                console.error('Erro ao carregar dinocats:', err);
+            }
+        };
+        loadDinocats();
+    }, [user]);
 
-    const loadDinocats = async () => {
-      try {
-        const res = await fetch(`http://localhost:5000/users/${user.id}/dinocats`);
-        const data = await res.json();
-        if (Array.isArray(data)) setDinocats(data);
-        else if (Array.isArray(data.rows)) setDinocats(data.rows);
-        else setDinocats([]);
-      } catch (err) {
-        console.error('Erro ao carregar dinocats:', err);
-        setDinocats([]);
-      }
+    // Função para escolher um dinocat
+    const handleChooseDinocat = (dinocat) => {
+        if (socket && battleId && user) {
+            socket.emit('selectDinocat', { battleId, userId: user.id, dinocat });
+        }
+    };
+    
+    // Função para sinalizar que o jogador está pronto
+    const handlePlayerReady = () => {
+        if (!myPlayerState?.dinocat) {
+            alert('Você precisa selecionar um Dinocat antes de ficar pronto!');
+            return;
+        }
+        if (socket && battleId && user) {
+            socket.emit('playerReady', { battleId, userId: user.id });
+        }
     };
 
-    loadDinocats();
-  }, [user]);
-
-  // ------------------------------
-  // Conecta à sala e escuta eventos do Socket
-  // ------------------------------
-  useEffect(() => {
-    if (!socket || !battleId || !user) return;
-
-    // Entra na sala
-    socket.emit('joinBattleRoom', { battleId, userId: user.id });
-    console.log('Solicitei joinBattleRoom:', battleId, user.id);
-
-    // Quando o oponente ficar ready
-    const handleOpponentReady = ({ userId: readyUserId, dinocat }) => {
-      if (readyUserId !== user.id) {
-        setOpponentReady(true);
-        console.log('Oponente está ready com:', dinocat);
-      }
-    };
-
-    // Quando ambos ficarem ready
-    const handleBothReady = () => {
-      console.log('Ambos estão ready! Avançando para a batalha...');
-      if (typeof onBothReady === 'function') onBothReady();
-    };
-
-    socket.on('opponentReady', handleOpponentReady);
-    socket.on('bothReady', handleBothReady);
-
-    return () => {
-      socket.off('opponentReady', handleOpponentReady);
-      socket.off('bothReady', handleBothReady);
-    };
-  }, [socket, battleId, user?.id, onBothReady]);
-
-  // ------------------------------
-  // Seleção de Dinocat
-  // ------------------------------
-  const handleChoose = (dino) => {
-    if (typeof onChoose === 'function') onChoose(dino);
-    if (battleId && socket) {
-      socket.emit('dinocatSelected', { roomId: battleId, dinocat: dino });
-      console.log('Dinocat selecionado enviado:', dino, 'para room', battleId);
+    if (!battleState || !user) {
+        return <div>Aguardando dados da sala...</div>;
     }
-  };
+    
+    // Extrai os dados do jogador e do oponente do estado central
+    const myPlayerState = battleState.players[user.id];
+    const opponentId = battleState.playerOrder.find(id => id !== user.id);
+    const opponentState = opponentId ? battleState.players[opponentId] : null;
 
-  // ------------------------------
-  // Ready do jogador
-  // ------------------------------
-  const handlePlayerReady = () => {
-    if (!selectedDinocat) return alert('Escolha um Dinocat primeiro!');
-    setReady(true);
-    socket.emit('playerReady', { battleId, userId: user.id, dinocat: selectedDinocat });
-    console.log('Enviei playerReady com:', selectedDinocat);
-  };
+    return (
+        <div className="dinocat-selection-container">
+            <h2>Escolha seu Combatente!</h2>
+            
+            <div className="selection-panels">
+                {/* Painel do Jogador */}
+                <div className="player-panel">
+                    <h3>{user.name} (Você)</h3>
+                    <div className="dinocat-list">
+                        {myDinocats.map((dino) => (
+                            <DinocatCard 
+                                key={dino.id} 
+                                dino={dino}
+                                isSelected={myPlayerState?.dinocat?.id === dino.id}
+                                onChoose={() => handleChooseDinocat(dino)} 
+                            />
+                        ))}
+                    </div>
+                    {myPlayerState?.isReady 
+                        ? <p className="status-ready">✅ Você está pronto!</p>
+                        : <button onClick={handlePlayerReady} disabled={!myPlayerState?.dinocat}>Estou Pronto!</button>
+                    }
+                </div>
 
-  // ------------------------------
-  // JSX
-  // ------------------------------
-  return (
-    <div className="dinocat-selection-container">
-      <h2>Selecione seu Dinocat</h2>
-      <div className="dinocat-list">
-        {dinocats.map((dino) => (
-          <DinocatCard key={dino.id} dino={dino} onChoose={handleChoose} />
-        ))}
-      </div>
-
-      <button onClick={handlePlayerReady} disabled={ready}>
-        {ready ? 'Ready!' : 'Clique para Ready'}
-      </button>
-
-      <div className="status">
-        {ready && <p>Você está pronto ✅</p>}
-        {opponentReady && <p>Oponente está pronto ✅</p>}
-      </div>
-    </div>
-  );
+                {/* Painel do Oponente */}
+                <div className="opponent-panel">
+                    <h3>Oponente</h3>
+                    {opponentState ? (
+                        <>
+                            {opponentState.dinocat ? (
+                                <DinocatCard dino={opponentState.dinocat} isSelected={true} />
+                            ) : (
+                                <p>Oponente está escolhendo...</p>
+                            )}
+                            {opponentState.isReady 
+                                ? <p className="status-ready">✅ Oponente está pronto!</p>
+                                : <p className="status-waiting">Aguardando oponente...</p>
+                            }
+                        </>
+                    ) : (
+                        <p>Aguardando oponente entrar na sala...</p>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
 }

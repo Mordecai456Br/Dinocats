@@ -1,7 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
-
 const http = require('http');
 const { Server } = require('socket.io');
 
@@ -11,117 +9,107 @@ const routes_invites = require('./routes/invitesRoutes');
 const routes_battles = require('./routes/battlesRoutes');
 const Utils = require('./utils');
 
+const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(routes_dinocats, routes_users, routes_invites, routes_battles);
 
-app.get('/api', (req, res) => {
-  res.json({ message: 'Olá do servidor Node.js!' });
-});
+app.get('/api', (req, res) => res.json({ message: 'Olá do servidor Node.js!' }));
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
-let connectionsRegistered = [];
-let connectionsOnline = [];
-let connectionsLoggedOut = [];
 let idCounter = 1;
+const battleRooms = {}; // estrutura: { [battleId]: { players: { [userId]: {ready, dinocat} }, bothReadyTriggered } }
 
-const battleRooms = {};
-
-function showConnectionStatus() {
-  Utils.logWithTime(`Online: ${connectionsOnline.length} | Disconnected: ${connectionsLoggedOut.length}`);
+// Conexões
+const connections = { online: [], loggedOut: [] };
+function logStatus() {
+    Utils.logWithTime(`Online: ${connections.online.length} | Desconectados: ${connections.loggedOut.length}`);
 }
 
+// Conexão Socket
 io.on('connection', (socket) => {
-  const now = new Date().toLocaleString('pt-BR');
-  const connectionObj = { socket: socket.id, id: idCounter++, connectedAt: now, disconnectedAt: null };
-
-  connectionsOnline.push(connectionObj);
-  connectionsRegistered.push(connectionObj);
-
-  Utils.logWithTime(`✅➡️ CONECTADO:`, connectionObj.socket, connectionObj.id, `in: ${connectionObj.connectedAt} out: ${connectionObj.disconnectedAt}`);
-  showConnectionStatus();
-
-
-  socket.on('ping', () => {
-    const index = connectionsRegistered.findIndex(conn => conn.socket === socket.id);
-    Utils.logWithTime('Ping recebido de', socket.id, connectionsRegistered[index].id);
-    socket.emit('pong', { message: 'Pong do servidor!' });
-  });
-
-
-  socket.on('loggedUser', (userId, callback) => {
-    Utils.logWithTime(`Usuário logado: ${userId} (socket ${socket.id})`);
-    if (callback) callback({ message: 'Usuário registrado com sucesso!' });
-  });
-
-
-  socket.on('disconnect', () => {
     const now = new Date().toLocaleString('pt-BR');
-    const index = connectionsOnline.findIndex(conn => conn.socket === socket.id);
+    const connObj = { socket: socket.id, id: idCounter++, connectedAt: now, disconnectedAt: null };
+    connections.online.push(connObj);
 
-    if (index !== -1) {
-      const [connectionOut] = connectionsOnline.splice(index, 1);
-      connectionOut.disconnectedAt = now;
-      connectionsLoggedOut.push(connectionOut);
-    }
+    Utils.logWithTime(`✅ Conectado: ${socket.id} | id interno: ${connObj.id}`);
+    logStatus();
 
-    Utils.logWithTime('❌⬅️ DESCONECTADO:', connectionObj.socket, connectionObj.id, `in: ${connectionObj.connectedAt} out: ${connectionObj.disconnectedAt}`);
-    showConnectionStatus();
-  });
+    // Ping
+    socket.on('ping', () => socket.emit('pong', { message: 'Pong do servidor!' }));
 
-  // Entrar na sala de batalha
+    // Usuário logado
+    socket.on('loggedUser', (userId, callback) => {
+        Utils.logWithTime(`Usuário logado: ${userId} (socket ${socket.id})`);
+        if (callback) callback({ message: 'Usuário registrado com sucesso!' });
+    });
 
-  // Evento: jogador entra na sala de batalha
-  socket.on('joinBattleRoom', ({ battleId, userId }) => {
-    socket.join(battleId);
-    console.log(`User: ${userId}, socket: ${socket.id} | joined room ${battleId}`);
+    // Entrar na sala de batalha
+    socket.on('joinBattleRoom', ({ battleId, userId }) => {
+        socket.userId = userId;
+        socket.join(battleId);
 
-    const room = io.sockets.adapter.rooms.get(battleId);
-    const usersInRoom = room ? room.size : 0;
-    console.log(`Usuários na sala ${battleId}: ${usersInRoom}`);
+        if (!battleRooms[battleId]) battleRooms[battleId] = { players: {}, bothReadyTriggered: false };
 
-    // Se tiver 2 jogadores na sala, avisa ambos
-    if (usersInRoom === 2) {
-      io.to(battleId).emit('bothInRoom', { battleId });
-    }
+        // Reseta ready ao entrar
+        battleRooms[battleId].players[userId] = { ready: false, dinocat: null };
 
-    // Aviso que um usuário entrou (sempre)
-    io.to(battleId).emit('userJoined', { userId, socket: socket.id, battleId });
-  });
+        const roomSize = io.sockets.adapter.rooms.get(battleId)?.size || 0;
+        console.log(`User: ${userId}, socket: ${socket.id} | Sala ${battleId}, usuários: ${roomSize}`);
 
-  // Evento: jogador seleciona Dinocat
-  socket.on("dinocatSelected", ({ roomId, dinocat }) => {
-    console.log(`Dinocat selecionado na sala ${roomId}:`, dinocat);
+        if (roomSize === 2) io.to(battleId).emit('bothInRoom', { battleId });
+        io.to(battleId).emit('userJoined', { userId, socket: socket.id, battleId });
+    });
 
-    // Repassa pra todos na sala, menos quem enviou
-    socket.to(roomId).emit("opponentSelected", { dinocat });
-  });
+    // Dinocat selecionado
+    socket.on('dinocatSelected', ({ roomId, dinocat }) => {
+        console.log(`Dinocat selecionado na sala ${roomId}:`, dinocat);
+        socket.to(roomId).emit('opponentSelected', { dinocat });
+    });
 
-  // Evento: jogador clica Ready
-  socket.on("playerReady", ({ battleId, userId, dinocat }) => {
-    if (!battleRooms[battleId]) battleRooms[battleId] = { players: {} };
+    // Jogador pronto
+    socket.on('playerReady', ({ battleId, userId, dinocat }) => {
+        const room = battleRooms[battleId];
+        if (!room) return;
 
-    // Marca este jogador como ready
-    battleRooms[battleId].players[userId] = { ready: true, dinocat };
+        room.players[userId] = { ready: true, dinocat };
+        socket.to(battleId).emit('opponentReady', { userId, dinocat });
 
-    // Avisa o outro jogador que este jogador está ready
-    socket.to(battleId).emit("opponentReady", { userId, dinocat });
+        const players = Object.values(room.players);
+        if (!room.bothReadyTriggered && players.length === 2 && players.every(p => p.ready)) {
+            room.bothReadyTriggered = true;
+            console.log(`Ambos os jogadores na sala ${battleId} estão prontos!`);
+            io.to(battleId).emit('bothReady');
+        }
+    });
 
-    // Confirma se ambos estão ready
-    const players = Object.values(battleRooms[battleId].players);
-    if (players.length === 2 && players.every(p => p.ready)) {
-      console.log(`Ambos os jogadores na sala ${battleId} estão prontos!`);
-      io.to(battleId).emit("bothReady");
-    }
-  });
+    // Mensagens
+    socket.on('sendMessage', ({ roomId, message, userId }) => {
+        io.to(roomId).emit('message', { userId, message, socket: socket.id });
+    });
 
+    // Desconexão
+    socket.on('disconnect', () => {
+        const now = new Date().toLocaleString('pt-BR');
+        const idx = connections.online.findIndex(c => c.socket === socket.id);
+        if (idx !== -1) {
+            const [c] = connections.online.splice(idx, 1);
+            c.disconnectedAt = now;
+            connections.loggedOut.push(c);
+        }
 
+        for (const battleId in battleRooms) {
+            if (battleRooms[battleId].players[socket.userId]) {
+                delete battleRooms[battleId].players[socket.userId];
+                console.log(`Jogador ${socket.userId} removido da sala ${battleId} ao desconectar.`);
+            }
+        }
 
-  socket.on('sendMessage', ({ roomId, message, userId }) => {
-    io.to(roomId).emit('message', { userId, message: message, socket: socket.id })
-  })
+        Utils.logWithTime(`❌ Desconectado: ${socket.id}`);
+        logStatus();
+    });
 });
 
 server.listen(5000, () => Utils.logWithTime('Servidor rodando na porta 5000'));

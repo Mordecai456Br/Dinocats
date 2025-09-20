@@ -28,7 +28,7 @@ export default function JoinBattle({ user, socket, battleId, setBattleId }) {
     const handleBothInRoom = () => {
       setInBattle(true);
 
-      let seconds = 5;
+      let seconds = 3;
       setFeedback(`Todos na sala! Redirecionando para batalha em ${seconds}s`);
       timer = setInterval(() => {
         seconds -= 1;

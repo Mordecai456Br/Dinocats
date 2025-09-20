@@ -87,3 +87,47 @@
     color: white;
     border-color: #62b2f8;
 }
+.selection-panels {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around; /* espaço igual entre os painéis */
+    align-items: flex-start;        /* alinha no topo */
+    width: 80%;
+    margin: 0 auto;
+    gap: 2rem;
+    flex-wrap: wrap;               /* permite quebrar em múltiplas linhas */
+}
+
+/* Painéis internos podem ter largura flexível */
+.player-panel, .opponent-panel {
+    flex: 1 1 300px; /* cresce até ocupar espaço, mínimo 300px */
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Ajuste para telas pequenas */
+@media (max-width: 768px) {
+    .selection-panels {
+        flex-direction: column;
+        align-items: center;
+        width: 95%;
+        gap: 1.5rem;
+    }
+
+    .player-panel, .opponent-panel {
+        max-width: 90%;
+    }
+
+    .dinocat-card {
+        width: 100%; /* ocupa largura máxima do painel */
+        max-width: 350px;
+    }
+
+    .dinocat-img {
+        width: 100%;
+        height: auto;
+    }
+}

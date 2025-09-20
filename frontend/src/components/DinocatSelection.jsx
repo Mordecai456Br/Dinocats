@@ -5,7 +5,7 @@ import '../css/dinocats.css';
 // --- COMPONENTE DE UI, RECEBE ESTADO E ENVIA AÇÕES ---
 export default function DinocatSelection({ user, battleId, battleState, socket }) {
     const [myDinocats, setMyDinocats] = useState([]);
-
+   
     // Busca os dinocats do usuário logado
     useEffect(() => {
         if (!user) return;
@@ -13,7 +13,7 @@ export default function DinocatSelection({ user, battleId, battleState, socket }
             try {
                 const res = await fetch(`http://localhost:5000/users/${user.id}/dinocats`);
                 const data = await res.json();
-                setMyDinocats(Array.isArray(data.rows) ? data.rows : []);
+                setMyDinocats(Array.isArray(data) ? data : []);
             } catch (err) {
                 console.error('Erro ao carregar dinocats:', err);
             }
@@ -44,7 +44,7 @@ export default function DinocatSelection({ user, battleId, battleState, socket }
     }
     
     // Extrai os dados do jogador e do oponente do estado central
-    const myPlayerState = battleState.players[user.id];
+    const myPlayerState = battleState?.players?.[user.id] || {};
     const opponentId = battleState.playerOrder.find(id => id !== user.id);
     const opponentState = opponentId ? battleState.players[opponentId] : null;
 
@@ -61,7 +61,7 @@ export default function DinocatSelection({ user, battleId, battleState, socket }
                             <DinocatCard 
                                 key={dino.id} 
                                 dino={dino}
-                                isSelected={myPlayerState?.dinocat?.id === dino.id}
+                                isSelected={myPlayerState.dinocat?.id === dino.id}
                                 onChoose={() => handleChooseDinocat(dino)} 
                             />
                         ))}

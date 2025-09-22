@@ -18,7 +18,6 @@ const EmotionsController = require('../controllers/dinocats/emotionsController.j
 /////////////////////////
 router.get('/dinocats', DinocatsController.getAll);
 router.get('/dinocats/:id', DinocatsController.getById);
-router.get('/:id/skills', DinocatsController.getSkills);
 router.post('/dinocats', DinocatsController.create);
 router.put('/dinocats/:id', DinocatsController.update);
 router.delete('/dinocats/:id', DinocatsController.remove);

@@ -20,15 +20,6 @@ module.exports = {
         }
     },
 
-     async getSkills(req, res) {
-        try {
-            const skills = await DinocatsModel.getSkillsByDinocatId(req.params.id);
-            res.json(skills);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-    },
-
     async create(req, res) {
         try {
             const dino = await DinocatsModel.create(req.body);

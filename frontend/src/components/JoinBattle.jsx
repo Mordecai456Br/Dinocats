@@ -1,48 +1,32 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-export default function JoinBattle({ user, socket, battleId, setBattleId }) {
+export default function JoinBattle({ user, socket }) {
   const [inviteId, setInviteId] = useState("");
   const [inBattle, setInBattle] = useState(false); // controla se entrou na batalha
   const [feedback, setFeedback] = useState("");
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
+  const [battleId, setBattleId] = useState(null);
+
   if (!user) return <p>Carregando...</p>;
 
-  const showFeedback = (message, time, consoleLog) => {
-    if (!time) time = 3000
-    if (consoleLog === true) {
-      setFeedback(message);
-      console.log(message)
-    } else {
-      setFeedback(message);
-
-    }
-    setTimeout(() => setFeedback(""), time);
+  const showFeedback = (message) => {
+    setFeedback(message);
+    setTimeout(() => setFeedback(""), 3000);
   };
 
   useEffect(() => {
     if (!socket) return;
-    let timer;
 
-    const handleBothInRoom = () => {
-      setInBattle(true);
+    // evento disparado quando todos estão na sala
+    socket.on("bothInRoom", ({ inviteId: roomId }) => {
+      if (roomId === inviteId) {
+        setInBattle(true);
+        showFeedback("Todos na sala! Você pode iniciar a batalha.");
+      }
+    });
 
-      let seconds = 3;
-      setFeedback(`Todos na sala! Redirecionando para batalha em ${seconds}s`);
-      timer = setInterval(() => {
-        seconds -= 1;
-        if (seconds > 0) {
-          setFeedback(`Todos na sala! Redirecionando para batalha em ${seconds}s`);
-        } else {
-          clearInterval(timer);
-          setFeedback("Redirecionando...");
-          navigate("/dinocat-selection"); // redireciona
-        }
-      }, 1000);
-    };
-
-    const handleBattleEnded = ({ winnerId, abandonerId }) => {
+    // evento disparado quando a batalha termina
+    socket.on("battleEnded", ({ winnerId, abandonerId }) => {
       if (winnerId === user.id) {
         showFeedback("Você venceu! 🎉");
       } else if (abandonerId === user.id) {
@@ -51,45 +35,32 @@ export default function JoinBattle({ user, socket, battleId, setBattleId }) {
         showFeedback(`Usuário ${winnerId} venceu a batalha!`);
       }
       setInBattle(false);
-      setBattleId(null); // limpa a batalha
-    };
+      setInviteId(""); // limpa campo
+    });
 
-    const handleUserJoined = (data) => {
-      console.log(`user ${data.userId} entrou na sala ${data.battleId}`);
-    };
+    socket.on('userJoined', (data) => {
+      console.log(`${data.userId} entrou na sala ${data.battleId}`)
+    })
 
-    const handleMessage = ({ userId: msgUserId, message: msg, socket: socketId }) => {
-      console.log(`${socketId} | user ${msgUserId}: ${msg}`);
-    };
-
-    socket.on("bothInRoom", handleBothInRoom);
-    socket.on("battleEnded", handleBattleEnded);
-    socket.on("userJoined", handleUserJoined);
-    socket.on("message", handleMessage);
-
+    socket.on('message', ({ userId, message, socket }) => {
+      console.log(`${socket} | user ${userId}: ${message}`)
+    })
     return () => {
-      socket.off("bothInRoom", handleBothInRoom);
-      socket.off("battleEnded", handleBattleEnded);
-      socket.off("userJoined", handleUserJoined);
-      socket.off("message", handleMessage);
-      if (timer) clearInterval(timer);
+      socket.off("bothInRoom");
+      socket.off("battleEnded");
+      socket.off('message');
     };
-  }, [socket, user.id, navigate, setBattleId]);
+  }, [socket, inviteId, user.id]);
 
-  // Função para entrar em uma batalha pendente
-  const userHasPendingBattle = (userId) => {
+  const userHasPedingBattle = (userId) => {
     fetch(`http://localhost:5000/users/${userId}/pending_battle`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
+        // handle the response data here, for example:
         if (data.id) {
           setBattleId(data.id);
-          if (socket && socket.connected) {
-            socket.emit('joinBattleRoom', { battleId: data.id, user });
-          } else {
-            showFeedback("Socket não está conectado. Tente novamente.");
-          }
-
-          showFeedback(`Você entrou na batalha ${data.id}`);
+          socket.emit('joinBattleRoom', { battleId: data.id, userId });
+          showFeedback(`Você entrou na batalha ${data.id}`)
         } else {
           showFeedback("Nenhuma batalha pendente encontrada.");
         }
@@ -97,27 +68,27 @@ export default function JoinBattle({ user, socket, battleId, setBattleId }) {
       .catch(console.error);
   };
 
-  // Função para enviar mensagem
   const sendMessage = () => {
     if (!battleId) return showFeedback("Nenhuma batalha ativa!");
     if (!message.trim()) return showFeedback("Mensagem vazia!");
-    socket.emit('sendMessage', { roomId: battleId, message, userId: user.id });
-    setMessage(""); // limpa input
+
+    socket.emit('sendMessage', { roomId: battleId, message: message, userId: user.id })
   };
 
-  // Função para abandonar batalha
+  /*const joinBattle = () => {
+    if (!inviteId) return showFeedback("Digite o inviteId!");
+    socket.emit("joinBattleRoom", { inviteId, userId: user.id });
+  };
+*/
+
   const abandonBattle = () => {
-    if (!battleId) return showFeedback("Nenhuma batalha ativa!");
-    socket.emit("leaveBattleRoom", { battleId, userId: user.id });
-    setBattleId(null);
-    setInBattle(false);
-    showFeedback("Você abandonou a batalha 😢");
+    if (!inviteId) return showFeedback("Digite o inviteId!");
+    socket.emit("leaveBattleRoom", { inviteId, userId: user.id });
   };
 
   return (
     <div>
       <h2>Entre numa batalha</h2>
-      {battleId && <p>batalha atual: {battleId}</p>}
       <div>
 
         {/*<input
@@ -141,7 +112,7 @@ export default function JoinBattle({ user, socket, battleId, setBattleId }) {
         </button>
 
 
-        <button onClick={() => userHasPendingBattle(user.id)} disabled={inBattle}>
+        <button onClick={() => userHasPedingBattle(user.id)} disabled={inBattle}>
           Join Battle
         </button>
 

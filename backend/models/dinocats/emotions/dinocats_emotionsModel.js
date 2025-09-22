@@ -1,4 +1,4 @@
-const pool = require('../../../config/db');
+const supabase = require('../../config/supabaseClient'); 
 const table = 'dinocats_emotions';
 
 module.exports = {

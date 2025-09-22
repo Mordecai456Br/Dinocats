@@ -1,4 +1,4 @@
-const pool = require('../../../config/db');
+const supabase = require('../../config/supabaseClient'); 
 const table = 'emotions_attributes';
 
 module.exports = {

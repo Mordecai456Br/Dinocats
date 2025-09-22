@@ -3,8 +3,8 @@ const router = express.Router();
 
 // Controllers
 const DinocatsController = require('../controllers/dinocats/dinocatsController.js');
-const SkillsController = require('../controllers/dinocats/skillsController.js');
-const EmotionsController = require('../controllers/dinocats/emotionsController.js');
+const SkillsController = require('../controllers/skills/skillsController.js');
+const EmotionsController = require('../controllers/emotions/emotionsController.js');
 
 
 

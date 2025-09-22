@@ -6,7 +6,7 @@ const UsersController = require('../controllers/users/usersController.js');
 const DinocatsController = require('../controllers/dinocats/dinocatsController.js');
 const SkillsController = require('../controllers/dinocats/skillsController.js');
 const EmotionsController = require('../controllers/dinocats/emotionsController.js');
-
+const PersonalitiesController = require('../controllers/dinocats/personalitiesController.js');
 /////////////////////////
 // USERS
 /////////////////////////

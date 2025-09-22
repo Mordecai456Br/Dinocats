@@ -3,6 +3,11 @@ const router = express.Router()
 
 const InvitesController = require('../controllers/invites/invitesController')
 
+
+
+/////////////////////////
+// INVITES
+/////////////////////////
 router.get('/invites', InvitesController.getAll);
 router.get('/invites/:id', InvitesController.getById);
 

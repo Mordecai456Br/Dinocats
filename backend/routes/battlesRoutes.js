@@ -4,6 +4,10 @@ const router = express.Router();
 const BattlesController = require('../controllers/battles/battlesController')
 
 
+
+/////////////////////////
+// BATTLES
+/////////////////////////
 router.get('/battles', BattlesController.getAll);
 router.get('/battles/:id', BattlesController.getById);
 router.post('/battles', BattlesController.create);

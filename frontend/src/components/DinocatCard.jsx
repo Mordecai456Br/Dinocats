@@ -1,4 +1,4 @@
-export default function DinocatCard({ dino, onChoose }) {
+export default function DinocatCard({ dino, onChoose, yours }) {
     if (!dino|| !dino.name) {
         return null; // ou um fallback visual
     }
@@ -13,17 +13,17 @@ export default function DinocatCard({ dino, onChoose }) {
                 />
                 <div className="dinocat-text-div">
                     <p className="dinocat-name">{dino.name}</p>
-                    <p className="dinocat-hp">{dino.hp_base}</p>
+                    <p className="dinocat-hp">{dino.level}</p>
                     <p className="dinocat-personality">{dino.personality}</p>
                 </div>
             </div>
 
-            <button
+            {yours && <button
                 className="dinocat-choose"
                 onClick={() => onChoose(dino)}
             >
                 Choose
-            </button>
+            </button>}
         </div>
     );
 }

@@ -10,13 +10,11 @@
     border-radius: 1.125rem;
     border: 2px solid #D7D7D7;
     background: #FFF;
-    margin-bottom: 2rem;
-}
 
+}
 .dinocat-card:hover {
     transform: scale(1.03);
 }
-
 .dinocat-img-text {
     display: flex;
     flex-direction: column;
@@ -24,11 +22,11 @@
     align-items: center;
     gap: 1.25rem;
 }
-
 .dinocat-img {
     width: 13.5rem;
     height: 13.5rem;
     aspect-ratio: 1/1;
+
     border-radius: 0.75rem;
     border: 1px solid #E4E4E4;
     object-fit: cover;
@@ -38,6 +36,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    
     gap: 0.5rem;
     align-self: stretch;
 }
@@ -53,6 +52,7 @@
 
 .dinocat-description {
     align-self: stretch;
+
     color: #767676;
     text-align: center;
     font-family: Inter;
@@ -70,9 +70,11 @@
     justify-content: center;
     align-items: center;
     gap: 0.625rem;
+
     border-radius: 0.75rem;
     border: 2px solid #D7D7D7;
     background: #FFF;
+
     color: #3F3F3F;
     font-family: Inter;
     font-size: 1.25rem;
@@ -80,59 +82,8 @@
     font-weight: 500;
     line-height: normal;
 }
-
-.dinocat-choose:hover {
+.dinocat-choose:hover{
     background-color: #3CA0F8;
     color: white;
     border-color: #62b2f8;
-}
-
-.selection-panels {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: flex-start;
-    width: 100%;   /* ocupa a largura inteira da tela */
-    max-width: 900px; /* opcional, limita tamanho total */
-    margin: 0 auto;
-    gap: 2rem;
-    flex-wrap: nowrap; /* evita quebrar linha */
-}
-
-
-/* Painéis internos podem ter largura flexível */
-.player-panel, .opponent-panel {
-    flex: 1 1 45%; /* cada painel ocupa até 45% do container */
-    max-width: 400px; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-}
-
-
-/* Ajuste para telas pequenas */
-@media (max-width: 768px) {
-    .selection-panels {
-        flex-direction: column;
-        align-items: center;
-        width: 95%;
-        gap: 1.5rem;
-    }
-
-    .player-panel,
-    .opponent-panel {
-        max-width: 90%;
-    }
-
-    .dinocat-card {
-        width: 100%;
-        /* ocupa largura máxima do painel */
-        max-width: 350px;
-    }
-
-    .dinocat-img {
-        width: 100%;
-        height: auto;
-    }
 }

@@ -20,17 +20,31 @@ export default function InvitesList({ userId, onAcceptInvite, socket }) {
 
   }, [open, userId]);
 
- /*useEffect(() => {
+  useEffect(() => {
     socket.on("bothInRoom", ({ inviteId }) => {
       console.log("Todos na sala! Mudando tela...");
-     
+      if (typeof onBothInRoom === "function") onBothInRoom();
     });
 
     return () => {
       socket.off("bothInRoom");
     };
-  }, []); 
-*/
+  }, []); // só roda uma vez ao montar
+
+  const userHasPedingBattle = () => {
+    fetch(`http://localhost:5000/users/${userId}/pending_battle`)
+      .then((res) => res.json())
+      .then((data) => {
+
+        if (data.id) {
+          setBattleId(data.id);
+          socket.emit('joinBattleRoom', { battleId: data.id, userId });
+          showFeedback(`Você entrou na batalha ${data.id}`)
+        } else {
+          showFeedback("Nenhuma batalha pendente encontrada.");
+        }
+      });
+  }
 
   const handleAcceptInvite = async (invite, accept, opencase) => {
 
@@ -50,6 +64,8 @@ export default function InvitesList({ userId, onAcceptInvite, socket }) {
     if (pendingBattle && pendingBattle.id && pendingBattle.status === 'ongoing') {
       return showFeedback("Você está em uma batalha, clique em join!");
     }
+
+
     
     await fetch(`http://localhost:5000/invites/${invite.id}/accept`, {
       method: "PUT",

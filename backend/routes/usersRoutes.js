@@ -6,7 +6,9 @@ const UsersController = require('../controllers/users/usersController.js');
 const InvitesController = require('../controllers/invites/invitesController.js');
 
 
-
+/////////////////////////
+// USERS
+/////////////////////////
 router.get('/users', UsersController.getAll);
 router.get('/users/:id', UsersController.getById);
 router.get('/users/:id/dinocats', UsersController.getDinocatsByUserId);

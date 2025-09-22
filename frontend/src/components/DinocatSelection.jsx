@@ -1,3 +1,4 @@
+// DinocatSelection.jsx
 import React, { useState, useEffect } from 'react';
 import DinocatCard from './DinocatCard';
 import '../css/dinocats.css';

@@ -1,4 +1,4 @@
-const PersonalitiesModel = require('../../models/dinocats/personalitiesModel');
+const PersonalitiesModel = require('../../models/dinocats/personalities/personalitiesModel');
 
 module.exports = {
     async getAll(req, res) {

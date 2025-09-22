@@ -9,11 +9,16 @@ const routes_dinocats = require('./routes/dinocatsRoutes');
 const routes_users = require('./routes/usersRoutes');
 const routes_invites = require('./routes/invitesRoutes');
 const routes_battles = require('./routes/battlesRoutes');
+const routes_attributes = require('./routes/attributesRoutes');
+const routes_emotions = require('./routes/emotionsRoutes');
+const routes_skills = require('./routes/skillsRoutes');
+const routes_personalities = require('./routes/personalitiesRoutes');
+
 const Utils = require('./utils');
 
 app.use(cors());
 app.use(express.json());
-app.use(routes_dinocats, routes_users, routes_invites, routes_battles);
+app.use(routes_dinocats, routes_users, routes_invites, routes_battles, routes_attributes, routes_emotions, routes_skills, routes_personalities);
 
 app.get('/api', (req, res) => {
   res.json({ message: 'Olá do servidor Node.js!' });

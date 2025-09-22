@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Controller
-const PersonalitiesController = require('../controllers/dinocats/personalitiesController.js');
+const PersonalitiesController = require('../controllers/personalities/personalitiesController.js');
 
 /////////////////////////
 // PERSONALITIES

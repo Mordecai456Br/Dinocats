@@ -28,7 +28,7 @@ export default function DinocatSelection({ user, battleId, battleState, socket }
             socket.emit('selectDinocat', { battleId, userId: user.id, dinocat });
         }
     };
-
+    
     // Função para sinalizar que o jogador está pronto
     const handlePlayerReady = () => {
         if (!myPlayerState?.dinocat) {
@@ -43,7 +43,7 @@ export default function DinocatSelection({ user, battleId, battleState, socket }
     if (!battleState || !user) {
         return <div>Aguardando dados da sala...</div>;
     }
-
+    
     // Extrai os dados do jogador e do oponente do estado central
     const myPlayerState = battleState?.players?.[user.id] || {};
     const opponentId = battleState.playerOrder.find(id => id !== user.id);
@@ -52,24 +52,22 @@ export default function DinocatSelection({ user, battleId, battleState, socket }
     return (
         <div className="dinocat-selection-container">
             <h2>Escolha seu Combatente!</h2>
-
+            
             <div className="selection-panels">
                 {/* Painel do Jogador */}
                 <div className="player-panel">
                     <h3>{user.name} (Você)</h3>
-                    
-                    {myPlayerState?.isReady
-                        ? <p className="status-ready">✅ Você está pronto!</p>
-                        : <button onClick={handlePlayerReady} disabled={!myPlayerState?.dinocat}>Estou Pronto!</button>
-                    }
+                        {myPlayerState?.isReady 
+                            ? <p className="status-ready">✅ Você está pronto!</p>
+                            : <button onClick={handlePlayerReady} disabled={!myPlayerState?.dinocat}>Estou Pronto!</button>
+                        }
                     <div className="dinocat-list">
                         {myDinocats.map((dino) => (
-                            <DinocatCard
-                                key={dino.id}
+                            <DinocatCard 
+                                key={dino.id} 
                                 dino={dino}
                                 isSelected={myPlayerState.dinocat?.id === dino.id}
-                                onChoose={() => handleChooseDinocat(dino)}
-                                yours={true}
+                                onChoose={() => handleChooseDinocat(dino)} 
                             />
                         ))}
                     </div>
@@ -79,14 +77,13 @@ export default function DinocatSelection({ user, battleId, battleState, socket }
                 <div className="opponent-panel">
                     {opponentState ? (
                         <>
-                            <h3>Oponente</h3>
-                        
-                            {opponentState.isReady
-                                ? <p className="status-ready">✅ Oponente está pronto!</p>
-                                : <p className="status-waiting">Aguardando oponente...</p>
-                            }
+                        <h3>Oponente</h3>
+                        {opponentState.isReady 
+                            ? <p className="status-ready">✅ Oponente está pronto!</p>
+                            : <p className="status-waiting">Aguardando oponente...</p>
+                        }
                             {opponentState.dinocat ? (
-                                <DinocatCard dino={opponentState.dinocat} isSelected={true} yours={false}/>
+                                <DinocatCard dino={opponentState.dinocat} isSelected={true} />
                             ) : (
                                 <p>Oponente está escolhendo...</p>
                             )}
@@ -94,7 +91,7 @@ export default function DinocatSelection({ user, battleId, battleState, socket }
                     ) : (
                         <p>Aguardando oponente entrar na sala...</p>
                     )}
-
+                    
                 </div>
             </div>
         </div>

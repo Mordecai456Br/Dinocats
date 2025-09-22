@@ -24,15 +24,18 @@ module.exports = {
     async create(req, res) {
         try {
             const user1 = await UsersModel.getById(req.body.user1_id)
+
             if (user1.is_on_battle_mode) return res.status(403).json({ message: `${user1.name} (${user1.id}) is on battle mode` })
-            if(UsersModel.userPendingBattle(user1.id)) return res.status(403).json({ message: `${user1.name} (${user1.id}) has a pending battle` })
+            const pendingBattle_user1 = await UsersModel.userPendingBattle(user1.id)
+            if (pendingBattle_user1) return res.status(403).json({ message: `${user1.name} (${user1.id}) has a pending battle` })
 
             const user2 = await UsersModel.getById(req.body.user2_id)
-            if (user2.is_on_battle_mode) return res.status(403).json({ message: `${user2.name} (${user2.id}) is on battle mode` })
-            if(UsersModel.userPendingBattle(user2.id)) return res.status(403).json({ message: `${user2.name} (${user2.id}) has a pending battle` })
+            const pendingBattle_user2 = await UsersModel.userPendingBattle(user2.id)
+            if (pendingBattle_user2) return res.status(403).json({ message: `${user2.name} (${user2.id}) has a pending battle` })
 
             const battle = await BattlesModel.create(req.body);
-            res.status(201).json(battle);
+            return res.status(201).json({ battle, message: 'battle has been created' });
+
         } catch (err) {
             res.status(500).json({ error: err.message });
         }

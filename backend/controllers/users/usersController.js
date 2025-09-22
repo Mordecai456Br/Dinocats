@@ -26,6 +26,10 @@ module.exports = {
       const user = await UsersModel.getById(req.params.id);
       if (!user) return res.status(404).json({ message: 'User not found' });
       const pendingBattle = await UsersModel.userPendingBattle(user.id);
+
+      if(!pendingBattle){
+        return res.json({ message: 'no pending battle found', battle: null})
+      }
       res.json(pendingBattle);
     } catch (err) {
       res.status(500).json({ error: err.message });

@@ -44,10 +44,13 @@ export default function InvitesList({ userId, onAcceptInvite, socket }) {
     const battleRes = await fetch(`http://localhost:5000/users/${userId}/pending_battle`);
     const pendingBattle = await battleRes.json();
 
-    if (pendingBattle && pendingBattle.id) {
-      return showFeedback("Você já possui uma batalha pendente!");
+    if (pendingBattle && pendingBattle.id && pendingBattle.status === 'pending') {
+      return showFeedback("Você já possui uma batalha pendente, clique em join!");
     }
-
+    if (pendingBattle && pendingBattle.id && pendingBattle.status === 'ongoing') {
+      return showFeedback("Você está em uma batalha, clique em join!");
+    }
+    
     await fetch(`http://localhost:5000/invites/${invite.id}/accept`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -55,17 +58,6 @@ export default function InvitesList({ userId, onAcceptInvite, socket }) {
     });
 
     setInvites((prev) => prev.filter((i) => i.id !== invite.id));
-
-    await fetch(`http://localhost:5000/battles`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user1_id: invite.user1_id,
-        user2_id: invite.user2_id,
-        invite_id: invite.id,
-        status: "pending",
-      }),
-    });
 
     showFeedback("Batalha criada, clique em join!");
   };

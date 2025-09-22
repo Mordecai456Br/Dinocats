@@ -16,8 +16,14 @@ module.exports = {
   },
 
   async userPendingBattle(user_id) {
-    const { data, error } = await supabase.from('battles').select("id").eq('status','pending')
-    .or(`user1_id.eq.${user_id}, user2_id.eq.${user_id}`).single();
+    const { data, error } = await supabase.from('battles').select('id, status')
+      .or(
+        `and(status.eq.pending,user1_id.eq.${user_id}),` +
+        `and(status.eq.pending,user2_id.eq.${user_id}),` +
+        `and(status.eq.ongoing,user1_id.eq.${user_id}),` +
+        `and(status.eq.ongoing,user2_id.eq.${user_id})`
+      )
+      .maybeSingle();
     if (error) throw error;
     return data;
   },

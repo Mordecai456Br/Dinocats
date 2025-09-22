@@ -1,6 +1,7 @@
 const invitesModel = require('../../models/invites/invitesModel');
 const InvitesModel = require('../../models/invites/invitesModel');
 const UsersModel = require('../../models/users/usersModel');
+const BattlesModel = require('../../models/battles/battlesModel');
 
 
 module.exports = {
@@ -76,23 +77,34 @@ module.exports = {
 
             const invite = await invitesModel.getById(inviteId);
 
-            if (!invite) return res.status(404).json({ message: 'invite not found' })
-            if (invite.accepted) return res.status(409).json({ message: 'this invite has been accepted before' })
+            if (!invite) return res.status(404).json({ message: 'invite not found' });
+            if (invite.accepted) return res.status(409).json({ message: 'this invite has been accepted before' });
 
 
 
-            const user1 = await UsersModel.getById(invite.user1_id)
-            if (user1.is_on_battle_mode) return res.status(403).json({ message: `${user1.name} (${user1.id}) is on battle mode` })
-            if (UsersModel.userPendingBattle(user1.id)) return res.status(403).json({ message: `${user1.name} (${user1.id}) has a pending battle` })
+            const user1 = await UsersModel.getById(invite.user1_id);
+            if (user1.is_on_battle_mode) return res.status(403).json({ message: `${user1.name} (${user1.id}) is on battle mode` });
+            const pendingBattle_user1 = await UsersModel.userPendingBattle(user1.id);
+            if (pendingBattle_user1) return res.status(403).json({ message: `${user1.name} (${user1.id}) has a pending or ongoing battle` });
 
 
-            const user2 = await UsersModel.getById(invite.user2_id)
-            if (user2.is_on_battle_mode) return res.status(403).json({ message: `${user2.name} (${user2.id}) is on battle mode` })
-            if (UsersModel.userPendingBattle(user2.id)) return res.status(403).json({ message: `${user2.name} (${user2.id}) has a pending battle` })
+            const user2 = await UsersModel.getById(invite.user2_id);
+            if (user2.is_on_battle_mode) return res.status(403).json({ message: `${user2.name} (${user2.id}) is on battle mode` });
+            const pendingBattle_user2 = await UsersModel.userPendingBattle(user2.id);
+            if (pendingBattle_user2) return res.status(403).json({ message: `${user2.name} (${user2.id}) has a pending or ongoing battle` });
 
-            const updatedInvite = await invitesModel.acceptInvite(inviteId)
+            const updatedInvite = await invitesModel.acceptInvite(inviteId);
+
+            const battle = await BattlesModel.create({
+                user1_id: invite.user1_id,
+                user2_id: invite.user2_id,
+                invite_id: invite.id,
+                status: "pending"
+            });
+
             await UsersModel.setBattleMode(user1.id, user2.id, true);
-            return res.json({ message: `${user1.name} (${user1.id}) and ${user2.name} (${user2.id}) has been set on battle mode`, updatedInvite })
+
+            return res.json({ message: "invite accepted and battle created", battle, updatedInvite });
 
         } catch (err) {
             res.status(500).json({ error: err.message });

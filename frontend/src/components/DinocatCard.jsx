@@ -8,7 +8,7 @@ export default function DinocatCard({ dino, onChoose }) {
             <div className="dinocat-img-text">
                 <img
                     className="dinocat-img"
-                    src={dino.img}
+                    src={dino.image_url}
                     alt={dino.name}
                 />
                 <div className="dinocat-text-div">

@@ -20,42 +20,66 @@ module.exports = {
     return data;
   },
 
-  async create({ name, user_id, kills, deaths, level, xp }) {
-    const { data, error } = await supabase
-      .from(table)
-      .insert([{ name, user_id, kills, deaths, level, xp }])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
-  },
-
-  async update(id, { name, user_id, kills, deaths, level, xp}) {
-    const { data, error } = await supabase
-      .from(table)
-      .update({
+  async getSkillsByDinocatId(dinocat_id) {
+  const { data, error } = await supabase
+    .from('dinocats_skills')
+    .select(`
+      skill_id,
+      skills (
         name,
-        user_id,
-        kills,
-        deaths,
-        level,
-        xp
-      })
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
-  },
+        type,
+        value
+      )
+    `)
+    .eq('dinocat_id', dinocat_id);
+
+  if (error) throw error;
+
+  // Mapeia para ficar compatível com o front
+  return data.map(item => ({
+    id: item.skill_id,
+    name: item.skills.name,
+    type: item.skills.type,
+    damage: item.skills.value // aqui seu "damage" é o value
+  }));
+},
+
+  async create({ name, user_id, kills, deaths, level, xp }) {
+  const { data, error } = await supabase
+    .from(table)
+    .insert([{ name, user_id, kills, deaths, level, xp }])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+},
+
+  async update(id, { name, user_id, kills, deaths, level, xp }) {
+  const { data, error } = await supabase
+    .from(table)
+    .update({
+      name,
+      user_id,
+      kills,
+      deaths,
+      level,
+      xp
+    })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+},
 
   async remove(id) {
-    const { data, error } = await supabase
-      .from(table)
-      .delete()
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
-  }
+  const { data, error } = await supabase
+    .from(table)
+    .delete()
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
 };

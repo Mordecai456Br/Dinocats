@@ -102,6 +102,7 @@ module.exports = {
                 status: "pending"
             });
 
+
             await UsersModel.setBattleMode(user1.id, user2.id, true);
 
             return res.json({ message: "invite accepted and battle created", battle, updatedInvite });

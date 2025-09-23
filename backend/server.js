@@ -14,6 +14,18 @@ const Utils = require('./utils');
 const app = express();
 app.use(require('cors')());
 app.use(express.json());
+
+const path = require('path');
+
+// Servir frontend build como estático
+app.use('/app', express.static(path.join(__dirname, '../frontend/dist')));
+
+// Qualquer rota não conhecida retorna o index.html
+app.get(/^\/app(\/.*)?$/, (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
+
+
 app.use(routes_dinocats, routes_users, routes_invites, routes_battles);
 
 const server = http.createServer(app);

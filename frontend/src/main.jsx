@@ -6,7 +6,7 @@ import App from './pages/Dinocats/App'
 
 
 createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
+  <BrowserRouter basename='/app'>
     <App />
   </BrowserRouter>,
 )

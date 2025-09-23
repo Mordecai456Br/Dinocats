@@ -20,27 +20,21 @@ export default function App() {
 
     // Conecta o socket uma vez
     useEffect(() => {
-        socketRef.current = io('http://localhost:5000', { autoConnect: true });
+        // Usa a URL atual do site em produção ou localhost em dev
+        const socketUrl =
+            import.meta.env.MODE === 'development'
+                ? 'http://localhost:5000'
+                : window.location.origin;
+
+        socketRef.current = io(socketUrl, { autoConnect: true });
         const socket = socketRef.current;
 
         socket.on('connect', () => console.log('Socket conectado:', socket.id));
-
-
-
-
-
-
-
-
-
-
-
 
         return () => {
             socket.disconnect();
         };
     }, []);
-
     // Efeito para gerenciar usuário online e eventos do socket
     useEffect(() => {
         const socket = socketRef.current;

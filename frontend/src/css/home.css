@@ -1,0 +1,80 @@
+/* Container principal */
+.home-main {
+  width: 100%;
+  
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap; /* para responsividade */
+}
+
+/* Colunas esquerda e direita */
+.home-left,
+.home-right {
+  flex: 1 1 480px; /* ocupa metade do espaço cada */
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Seções internas */
+.invite-section, .notifications-section,
+.join-section {
+  background-color: rgba(23, 14, 40, 0.85);
+  padding: 20px;
+  border-radius: 16px;
+}
+
+/* Ajuste dos formulários */
+.invite-form,
+.join-form {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Inputs */
+.invite-input,
+.join-input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+}
+
+/* Botões */
+.invite-button,
+.abandon-button {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  background-color: #3c236d;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.invite-button:hover,
+.abandon-button:hover {
+  background-color: #54329a;
+}
+
+/* Join actions */
+.join-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .home-main {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .home-left,
+  .home-right {
+    flex: 1 1 100%;
+  }
+}

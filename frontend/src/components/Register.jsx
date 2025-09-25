@@ -29,23 +29,26 @@ export default function Register({ onRegister }) {
       }
 
       const user = await res.json();
+      setFeedback("Usuário registrado");
       onRegister(user);
+
     } catch (err) {
       setFeedback("Erro ao conectar com o servidor!");
       console.error(err);
-    }
+    };
   };
 
   return (
-    
+
     <div className="register-container">
       {/* Vídeo de fundo */}
-      <video autoPlay loop muted playsInline className="register-video">
+      <video className="login-video" autoPlay loop muted playsInline>
         <source src="/app/assets/Dinocat_Animado_com_Fundo_Galactico.mp4" type="video/mp4" />
       </video>
 
-      {/* Camada de blur */}
-      <div className="register-overlay"></div>
+      {/* 🔹 Camada de blur */}
+      <div className="login-overlay"></div>
+
 
       {/* Modal central */}
       <form className="register-modal" onSubmit={handleSubmit}>
@@ -89,6 +92,6 @@ export default function Register({ onRegister }) {
         <button type="submit" className="register-button">Register</button>
       </form>
     </div>
-    
+
   );
 }

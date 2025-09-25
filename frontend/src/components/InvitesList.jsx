@@ -61,7 +61,7 @@ export default function InvitesList({ userId, onAcceptInvite, socket }) {
 
     showFeedback("Batalha criada, clique em join!");
   };
-  
+
   const handleDeclineInvite = async (inviteId, accept, opencase) => {
     await fetch(`http://localhost:5000/invites/${inviteId}/decline`, {
       method: "PUT",
@@ -78,7 +78,7 @@ export default function InvitesList({ userId, onAcceptInvite, socket }) {
 
   return (
 
-    <div style={{ position: "absolute", top: 10, left: 10 }}>
+    <div style={{ position: "relative", top: 10, left: 10 }}>
       <button onClick={() => setOpen(!open)}>Notifications</button>
       {open && (
         <div className="invite-list" style={{ background: "light-gray" }}>

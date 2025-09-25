@@ -96,6 +96,14 @@ export default function App() {
         navigate('/home');
     }, [navigate]);
 
+    const handleRegister = useCallback((loggedUser) => {
+        setUser(null);
+        sessionStorage.removeItem("user");
+        setUser(loggedUser);
+        sessionStorage.setItem('user', JSON.stringify(loggedUser));
+        navigate('/home');
+    }, [navigate]);
+
     const handleLogout = useCallback(() => {
         setUser(null);
         sessionStorage.removeItem("user");
@@ -119,7 +127,7 @@ export default function App() {
 
             <Route path='/login' element={<Login onLogin={handleLogin} />} />
 
-            <Route path='/register' element={<Register onRegister={(user) => console.log("Registrado:", user)} />
+            <Route path='/register' element={<Register onRegister={handleRegister} />
 } />
 
             <Route path='/home' element={
@@ -130,6 +138,7 @@ export default function App() {
                     handleLogout={handleLogout}
                     setBattleId={setBattleId}
                     battleId={battleId}
+                    navigate={navigate}
                 />
             } />
 

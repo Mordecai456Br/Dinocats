@@ -28,18 +28,18 @@ module.exports = {
     return data;
   },
 
-  async create({ name, birthday, cpf, password }) {
-    const { data, error } = await supabase.from(table).insert([{ name, birthday, cpf, password }]).select().single();
+  async create({ name, birthday, password }) {
+    const { data, error } = await supabase.from(table).insert([{ name, birthday, password }]).select().single();
     if (error) throw error;
     return data;
   },
 
-  async update(id, { name, birthday, cpf, password, is_on_battle_mode }) {
+  async update(id, { name, birthday, password, is_on_battle_mode }) {
     const { data, error } = await supabase.from(table)
       .update({
         name,
         birthday,
-        cpf,
+    
         password,
         is_on_battle_mode
       })

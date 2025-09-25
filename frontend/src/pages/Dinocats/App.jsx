@@ -4,9 +4,11 @@ import { io } from "socket.io-client";
 
 // Componentes
 import Login from '/src/components/Login';
+import Register from '/src/components/Register';
 import Home from '/src/components/Home';
 import DinocatSelection from '/src/components/DinocatSelection';
 import Battle from '/src/components/Battle';
+import Landingpage from '../../components/LandingPage';
 
 
 export default function App() {
@@ -97,7 +99,7 @@ export default function App() {
     const handleLogout = useCallback(() => {
         setUser(null);
         sessionStorage.removeItem("user");
-        navigate("/");
+        navigate("/login");
     }, [navigate]);
 
     // Entrar na batalha
@@ -111,8 +113,14 @@ export default function App() {
 
     return (
         <Routes>
-            <Route path='/' element={<Login onLogin={handleLogin} />} />
 
+            
+            <Route path='/' element={<Landingpage navigate={navigate} />} />
+
+            <Route path='/login' element={<Login onLogin={handleLogin} />} />
+
+            <Route path='/register' element={<Register onRegister={(user) => console.log("Registrado:", user)} />
+} />
 
             <Route path='/home' element={
                 <Home

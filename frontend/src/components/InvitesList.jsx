@@ -61,8 +61,7 @@ export default function InvitesList({ userId, onAcceptInvite, socket }) {
 
     showFeedback("Batalha criada, clique em join!");
   };
-
-
+  
   const handleDeclineInvite = async (inviteId, accept, opencase) => {
     await fetch(`http://localhost:5000/invites/${inviteId}/decline`, {
       method: "PUT",

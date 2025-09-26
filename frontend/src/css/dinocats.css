@@ -1,143 +1,262 @@
-.dinocat-card {
+/* ====== GERAL ====== */
+.select-dinocat {
+    min-height: 100vh;
+    /* garante altura mínima da tela */
+    overflow-y: auto;
+    /* permite scroll vertical quando necessário */
+    padding-bottom: 2rem;
+    /* evita que conteúdo fique colado na borda inferior */
+}
+
+/* Ajuste da body para não cortar conteúdo */
+
+
+/* ====== HEADER ====== */
+.header {
+    width: 100%;
     display: flex;
-    width: 18rem;
-    padding: 1.25rem;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.headertext {
+    display: flex;
     flex-direction: column;
+}
+
+.headertext .select-your-dinocat {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.headertext .and-be-ready {
+    font-size: 1rem;
+    color: #6a5c90;
+    text-align: center;
+}
+
+/* ====== BODY ====== */
+.body {
+    width: 100%;
+    flex: 1 0 auto;
+    /* flex-grow e flex-shrink ajustáveis */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 1rem;
+    box-sizing: border-box;
+    gap: 0;
+}
+
+/* ====== SEÇÃO DE SELEÇÃO (VOCÊ E OPONENTE) ====== */
+.selectedsection {
+    width: 100%;
+    display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 460px;
-    max-height: 460px;
-    border-radius: 1.125rem;
-    border: 2px solid #D7D7D7;
-    background: #FFF;
-    margin-bottom: 2rem;
-}
-
-.dinocat-card:hover {
-    transform: scale(1.03);
-}
-
-.dinocat-img-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1.25rem;
-}
-
-.dinocat-img {
-    width: 13.5rem;
-    height: 13.5rem;
-    aspect-ratio: 1/1;
-
-    border-radius: 0.75rem;
-    border: 1px solid #E4E4E4;
-    object-fit: cover;
-}
-
-.dinocat-text-div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    gap: 0.5rem;
-    align-self: stretch;
-}
-
-.dinocat-name {
-    color: #000;
-    font-family: Inter;
-    font-size: 1.25rem;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
-}
-
-.dinocat-description {
-    align-self: stretch;
-
-    color: #767676;
-    text-align: center;
-    font-family: Inter;
-    font-size: 1.25rem;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
-}
-
-.dinocat-choose {
-    display: flex;
-    width: 12.75rem;
-    height: 3.25rem;
-    padding: 1.25rem;
-    justify-content: center;
-    align-items: center;
-    gap: 0.625rem;
-
-    border-radius: 0.75rem;
-    border: 2px solid #D7D7D7;
-    background: #FFF;
-
-    color: #3F3F3F;
-    font-family: Inter;
-    font-size: 1.25rem;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
-}
-
-.dinocat-choose:hover {
-    background-color: #3CA0F8;
-    color: white;
-    border-color: #62b2f8;
-}
-
-.selection-panels {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: flex-start;
-    width: 100%;   /* ocupa a largura inteira da tela */
-    max-width: 900px; /* opcional, limita tamanho total */
-    margin: 0 auto;
     gap: 2rem;
-    flex-wrap: nowrap; /* evita quebrar linha */
+    flex-wrap: nowrap;
 }
 
-
-/* Painéis internos podem ter largura flexível */
-.player-panel, .opponent-panel {
-    flex: 1 1 45%; /* cada painel ocupa até 45% do container */
-    max-width: 400px; 
+.yours {
+    flex: 1 1 45%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 30px;
+    text-align: center;
 }
 
+.you {
+    display: flex;
+    flex-direction: column;
+}
 
-/* Ajuste para telas pequenas */
-@media (max-width: 768px) {
-    .selection-panels {
+.you .name {
+    font-size: 20px;
+    color: #80b9ff;
+}
+
+/* Card do dinocat escolhido */
+.dinocatchoosen {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.dinocatcard,
+.select-dinocat-dinocatcard {
+
+    min-width: 306px;
+    min-height: 417px;
+    height: 100%;
+    border-radius: 16px;
+    background-color: #170e28;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.dinocatcard:hover,
+.select-dinocat-dinocatcard:hover {
+    transform: translateY(-5px);
+    background-color: #1e1235;
+}
+
+/* ====== BOTÃO PRONTO ====== */
+.ready-button {
+    width: 182px;
+    height: 58px;
+    border-radius: 16px;
+    background-color: #2a194d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff;
+    text-align: center;
+    transition: background-color .3s ease, transform .2s ease;
+}
+
+.ready-button:hover {
+    background-color: #3d2870;
+    transform: scale(1.05);
+}
+
+.click-me {
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+/* ====== SEÇÃO DOS SEUS DINOCATS ====== */
+.your-dinocats {
+    width: 100%;
+   
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    border-radius: 20px;
+    font-size: 24px;
+
+}
+
+.dinocatchoosen2 {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    justify-items: center;
+}
+
+.dinocatcard2 {
+    width: 100%;
+    max-width: 183px;
+    border-radius: 16px;
+    background-color: #170e28;
+    height: 237px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 20px 20px;
+    box-sizing: border-box;
+    gap: 24px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.dinocatcard2:hover {
+    transform: translateY(-5px);
+    background-color: #1e1235;
+}
+
+.frame-parent {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.frame-group {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.hp-parent {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.span,
+.b4 {
+    color: #80b9ff;
+}
+
+/* ====== RESPONSIVIDADE ====== */
+@media (max-width: 900px) {
+    .selectsection {
         flex-direction: column;
         align-items: center;
-        width: 95%;
-        gap: 1.5rem;
     }
 
-    .player-panel,
-    .opponent-panel {
-        max-width: 90%;
-    }
-
-    .dinocat-card {
+    .yours {
         width: 100%;
-        /* ocupa largura máxima do painel */
-        max-width: 350px;
     }
 
-    .dinocat-img {
+    .dinocatcard,
+    .select-dinocat-dinocatcard {
+        max-width: 280px;
+        height: 380px;
+    }
+
+    .ready-button {
         width: 100%;
-        height: auto;
+    }
+}
+
+@media (max-height: 700px),
+(max-width: 500px) {
+    .body {
+        padding: 20px 1rem;
+        gap: 1rem;
+    }
+
+    .dinocatcard,
+    .select-dinocat-dinocatcard {
+        max-width: 240px;
+        height: 320px;
+    }
+
+    .dinocatcard2 {
+        max-width: 150px;
+        height: 200px;
+    }
+
+    .ready-button {
+        padding: 15px 20px;
+        font-size: 20px;
+    }
+
+    .headertext .select-your-dinocat {
+        font-size: 2rem;
+    }
+
+    .headertext .and-be-ready {
+        font-size: 1.2rem;
     }
 }

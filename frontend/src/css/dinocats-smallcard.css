@@ -1,0 +1,83 @@
+
+.dinocat-mini-card {
+  
+  position: relative;
+  border-radius: 16px;
+  background-color: #170e28;
+  height: 237px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 20px 20px;
+  box-sizing: border-box;
+  gap: 24px;
+  text-align: left;
+  font-size: 16px;
+  color: #fff;
+  font-family: Inter;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+
+.dinocat-mini-card:hover {
+  border: 1px solid #7b56c9; 
+  background-color: #1e1436;
+}
+
+
+.dinocat-mini-card.selected {
+  border: 2px solid #8865cd;
+  background-color: #1e1436; 
+}
+
+
+.mini-header {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 12px;
+}
+
+.mini-header-text {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mini-dinocat-name {
+  position: relative;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.mini-personality-text {
+  position: relative;
+  font-size: 14px;
+  color: #80b9ff;
+}
+
+
+.mini-header-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  justify-content: space-between;
+}
+
+.mini-health-status span {
+  color: #80b9ff;
+}
+
+
+.mini-dinocat-image {
+  width: 144px;
+  position: relative;
+  max-height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}

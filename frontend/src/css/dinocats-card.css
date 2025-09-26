@@ -1,0 +1,134 @@
+p {
+    margin: 0;
+}
+
+.dinocat-card {
+    width: 100%;
+    position: relative;
+    border-radius: 16px;
+    background-color: #170e28;
+    height: 417px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 30px 0px;
+    box-sizing: border-box;
+    gap: 24px;
+    text-align: left;
+    font-size: 20px;
+    color: #fff;
+    font-family: Inter;
+}
+
+.dinocat-header {
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+    font-size: 20px;
+    color: #fff;
+    font-family: Inter;
+}
+
+.header-text {
+    width: 246px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0px;
+}
+
+.dinocat-name {
+    position: relative;
+}
+
+.personality-text {
+    position: relative;
+    font-size: 14px;
+}
+
+.header-status {
+    width: 246px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+}
+
+.health-status {
+    white-space: pre-wrap;
+}
+
+span {
+    color: #80b9ff;
+}
+
+.healthbar {
+    width: 170px;
+    position: relative;
+    height: 20px;
+}
+
+.healthbar-base {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-radius: 8px;
+    background-color: #3d9900;
+    width: 170px;
+    height: 20px;
+    max-width: 100%;
+}
+
+.healthbar-item {
+    position: absolute;
+    top: 1px;
+    left: 0.5px;
+    border-radius: 7px;
+    background-color: #b2ff80;
+    width: 108px;
+    height: 18px;
+    max-width: 100%;
+}
+
+.emotions-container {
+    align-self: stretch;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    font-size: 14px;
+}
+
+.emotion {
+    border-radius: 10px;
+    background-color: #2b194d;
+    border: 1px solid #55329a;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 4px 10px;
+}
+
+.emotion-text {
+    width: 100%;
+    position: relative;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: Inter;
+    color: #fff;
+    text-align: left;
+    display: inline-block;
+    margin: 0;
+}
+
+.dinocat-image {
+    width: 240px;
+    height: 224px;
+    position: relative;
+    max-height: 100%;
+    object-fit: cover;
+}

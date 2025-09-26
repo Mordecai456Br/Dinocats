@@ -148,6 +148,7 @@ export default function App() {
                     battleId={battleId}
                     battleState={battleState}
                     socket={socketRef.current}
+                    navigate={navigate}
 
                 />
             } />

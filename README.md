@@ -21,7 +21,7 @@ Cada Dinocat possui atributos que influenciam diretamente o combate:
 O projeto é dividido em duas partes principais: **Backend** e **Frontend**.
 
 ### Backend (Node.js)
-Segue o padrão **MCR**:
+Segue o padrão **MVC + Routes**:
 - **Config/Database** – Configurações de conexão e estrutura do banco de dados.
 - **Models** – Representação dos dados e suas regras.
 - **Controllers** – Lógica de negócio e manipulação de dados.

@@ -260,3 +260,65 @@
         font-size: 1.2rem;
     }
 }
+
+/* ====== RESPONSIVIDADE PARA CELULARES HORIZONTAIS ====== */
+@media screen and (max-width: 900px) and (orientation: landscape) {
+    .select-dinocat {
+        min-height: 100vh;
+        overflow-y: auto;
+        padding: 1rem;
+    }
+
+    .body {
+        flex-direction: column; 
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .selectedsection {
+        flex-direction: row; 
+        justify-content: space-between;
+        gap: 1.5rem;
+    }
+
+    .yours {
+        flex: 1 1 50%;
+        max-width: 50%;
+        gap: 1rem;
+    }
+
+    .your-dinocats {
+        flex: 1 1 50%;
+        max-width: 50%;
+        gap: 1rem;
+    }
+
+    .dinocatcard,
+    .select-dinocat-dinocatcard {
+        max-width: 220px;
+        min-width: 200px;
+        height: 300px;
+    }
+
+    .dinocatcard2 {
+        max-width: 140px;
+        height: 190px;
+    }
+
+    .ready-button {
+        width: 160px;
+        height: 50px;
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .headertext .select-your-dinocat {
+        font-size: 1.5rem;
+    }
+
+    .headertext .and-be-ready {
+        font-size: 1rem;
+    }
+}

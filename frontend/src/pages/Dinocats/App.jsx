@@ -10,12 +10,10 @@ import DinocatSelection from '/src/components/DinocatSelection';
 import Battle from '/src/components/Battle';
 import Landingpage from '../../components/LandingPage';
 
-
 export default function App() {
     const [user, setUser] = useState(null);
     const [battleId, setBattleId] = useState(null);
     const [battleState, setBattleState] = useState(null);
-
 
     const navigate = useNavigate();
     const socketRef = useRef(null);
@@ -122,14 +120,12 @@ export default function App() {
     return (
         <Routes>
 
-            
             <Route path='/' element={<Landingpage navigate={navigate} />} />
 
             <Route path='/login' element={<Login onLogin={handleLogin} />} />
 
             <Route path='/register' element={<Register onRegister={handleRegister} />
 } />
-
             <Route path='/home' element={
                 <Home
                     user={user}
@@ -149,7 +145,6 @@ export default function App() {
                     battleState={battleState}
                     socket={socketRef.current}
                     navigate={navigate}
-
                 />
             } />
 
@@ -158,12 +153,6 @@ export default function App() {
                     user={user}
                     battleState={battleState}
                     socket={socketRef.current}
-
-
-
-
-
-
                 />
             } />
         </Routes>

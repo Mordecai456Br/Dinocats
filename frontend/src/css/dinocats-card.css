@@ -132,3 +132,66 @@ span {
     max-height: 100%;
     object-fit: cover;
 }
+
+
+@media screen and (max-width: 900px) and (orientation: landscape) {
+
+
+  .dinocat-card {
+      width: 90%;
+      max-width: 280px;
+      height: auto; 
+      padding: 20px;
+      gap: 16px;
+  }
+
+  .dinocat-header {
+      font-size: 16px;
+      gap: 8px;
+  }
+
+  .header-text,
+  .header-status {
+      width: 100%;
+      justify-content: space-between;
+      font-size: 14px;
+  }
+
+
+  .dinocat-image {
+      width: 180px;
+      height: 160px;
+      object-fit: contain;
+  }
+
+
+  .emotions-container {
+      gap: 6px;
+      font-size: 12px;
+  }
+
+  .emotion {
+      padding: 2px 6px;
+  }
+
+  .emotion-text {
+      font-size: 12px;
+  }
+
+  /* ====== BARRA DE VIDA ====== */
+  .healthbar {
+      width: 100%;
+      max-width: 150px;
+      height: 16px;
+  }
+
+  .healthbar-base {
+      width: 100%;
+      height: 16px;
+  }
+
+  .healthbar-item {
+      height: 14px;
+      max-width: 100%;
+  }
+}
